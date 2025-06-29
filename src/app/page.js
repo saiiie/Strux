@@ -1,34 +1,10 @@
 'use client'
 
 import { useState } from 'react';
-import Image from 'next/image';
+import Image from 'next/image';   
 import { useRouter } from 'next/navigation';
-
-function Box({ children, className }) {
-  return (
-    <div className={`flex flex-col h-screen w-1/2 m-0 p-[1em] justify-center items-center ${className}`}>
-      {children}
-    </div>
-  )
-}
-
-function InputField({ label, type = "text", name, placeholder, value, onChange }) {
-  return (
-    <div className="flex flex-col gap-y-[5px] w-full m-0 p-0">
-      <label htmlFor={name} className="text-sm text-[#0C2D49] font-medium"> {label} </label>
-      <input
-        type={type}
-        name={name}
-        id={name}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className="px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
-        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
-      />
-    </div>
-  )
-}
+import { Box, InputField} from '@/app/components/components';
+import  loginUser  from '@/lib/auth';
 
 export default function LogInPage() {
   const router = useRouter();
@@ -53,13 +29,8 @@ export default function LogInPage() {
     }
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
+      
+      const data = await loginUser(formData);
 
       if (data.success) {
         router.push('/dashboard');
