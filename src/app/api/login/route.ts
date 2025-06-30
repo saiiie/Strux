@@ -1,20 +1,43 @@
+'use server'
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
     try {
-        const { userID, password } = await req.json();
+        const { username, password } = await req.json();
 
         const result = await pool.query(
-            'SELECT * FROM users WHERE userID = $1 AND password = $2',
-            [userID, password]
+            'SELECT * FROM accounts WHERE username = $1 AND password = $2',
+            [username, password]
         );
 
-        if (result.rowCount === 1) {
-            return NextResponse.json({ success: true, message: 'Login successful' });
-        } else {
-            return NextResponse.json({ success: false, message: 'Invalid userID or password' }, { status: 401 });
+        if (result.rowCount !== 1) {
+            return NextResponse.json({ success: false, message: 'Invalid username or password' }, { status: 401 });
         }
+
+        const { account_id, role } = result.rows[0];
+
+        let userID = null;
+
+        if (role === 'pm') {
+            const pmResult = await pool.query(
+                'SELECT pmid FROM project_managers WHERE account_id = $1', [account_id]
+            );
+
+            if (pmResult.rowCount === 1) {
+                userID = pmResult.rows[0].pmid;
+            } else {
+                return NextResponse.json({ success: false, message: 'PM user ID not found' }, { status: 404 });
+            }
+        }
+
+        return NextResponse.json({
+            success: true,
+            role,
+            userID,
+            message: 'Login successful'
+        });
+
     } catch (error: any) {
         console.error('Login error:', error);
         return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });

@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react';
-import Image from 'next/image';   
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Box, InputField} from '@/app/components/components';
-import  loginUser  from '@/lib/auth';
+import { Box, InputField } from '@/app/components/components';
+import loginUser from '@/lib/auth';
 
 export default function LogInPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    userID: '',
+    username: '',
     password: ''
   });
 
@@ -22,21 +22,23 @@ export default function LogInPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.userID.trim() || !formData.password.trim()) {
+    if (!formData.username.trim() || !formData.password.trim()) {
       setErrorMessage('Please fill in all fields.');
       setTimeout(() => setErrorMessage(''), 3000);
       return;
     }
 
     try {
-      
+
       const data = await loginUser(formData);
 
-      if (data.success) {
-        router.push('/dashboard');
-      } else {
+      if (!data.success) {
         setErrorMessage('Invalid user or password.');
         setTimeout(() => setErrorMessage(''), 3000);
+      } else if (data.role === 'admin') {
+        router.push('/dashboard/admin');
+      } else if (data.role === 'pm') {
+        router.push(`/dashboard/pm/${data.userID}`);
       }
     } catch (error) {
       setErrorMessage('Something went wrong. Please try again.');
@@ -71,9 +73,9 @@ export default function LogInPage() {
               className="flex flex-col gap-y-[15px] mt-4 m-0">
               <InputField
                 label="User ID"
-                name="userID"
+                name="username"
                 placeholder="Enter your ID"
-                value={formData.userID}
+                value={formData.username}
                 onChange={handleChange}
               />
               <InputField
