@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export function Box({ children, className }) {
   return (
-      <div className={`flex flex-col h-screen w-1/2 m-0 p-[1em] justify-center items-center ${className}`}>
-        {children}
-      </div>
+    <div className={`flex flex-col h-screen w-1/2 m-0 p-[1em] justify-center items-center ${className}`}>
+      {children}
+    </div>
   )
 }
 
@@ -49,7 +49,7 @@ function SidebarTab({ label, svg, href }) {
             rounded-md hover:bg-[#FBFBFB]/20 transition-all
             ">
         {svg}
-        <span className="text-[16px] font-medium">{label}</span>
+        <span className="text-[16px] text-[#FBFBFB] font-medium">{label}</span>
       </div>
     </Link>
   )

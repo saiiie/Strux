@@ -36,10 +36,8 @@ export async function POST(req: NextRequest) {
             role,
             userID,
             message: 'Login successful'
-        });
 
     } catch (error: any) {
         console.error('Login error:', error);
         return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
     }
-}
