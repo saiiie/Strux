@@ -12,13 +12,11 @@ export async function POST(req: NextRequest) {
         );
 
         if (result.rowCount !== 1) {
-            return NextResponse.json({ success: false, message: 'Invalid username or password' }, { status: 401 });
         }
 
         const { account_id, role } = result.rows[0];
 
         let userID = null;
-
         if (role === 'pm') {
             const pmResult = await pool.query(
                 'SELECT pmid FROM project_managers WHERE account_id = $1', [account_id]
@@ -26,8 +24,6 @@ export async function POST(req: NextRequest) {
 
             if (pmResult.rowCount === 1) {
                 userID = pmResult.rows[0].pmid;
-            } else {
-                return NextResponse.json({ success: false, message: 'PM user ID not found' }, { status: 404 });
             }
         }
 

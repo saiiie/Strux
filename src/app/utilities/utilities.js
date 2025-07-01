@@ -14,7 +14,7 @@ export function adminTabs(){
 }
 
 export function pmTabs(){
-    const adminTabs = [
+    const pmTabs = [
         { label: "Projects", svg: <Folder size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },
         { label: "Inventory Logs", svg: <File size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },
         { label: "Material Requests", svg: <Clipboard size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },

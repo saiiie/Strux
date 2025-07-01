@@ -1,14 +1,12 @@
 'use client'
 
-import { useParams } from 'next/navigation'; 
+import { Sidebar } from '@/app/components/components';
+import { pmTabs } from '@/app/utilities/utilities';
 
-export default function ProjectManagerDashboard() {
-  const params = useParams();
-  const { id: pmid } = params;
-
-  return (
-    <div>
-      <h1>Project Manager ID: {pmid}</h1>
-    </div>
-  );
+export default function DashboardPage() {
+    return (
+        <>
+            <Sidebar tabs={pmTabs()} />
+        </>
+    );
 }
