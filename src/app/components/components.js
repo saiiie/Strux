@@ -54,3 +54,43 @@ function SidebarTab({ label, svg, href }) {
     </Link>
   )
 }
+
+export function Main({ columns, data }) {
+  return (
+    <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
+      <div className="flex flex-col m-0 p-[1.5em] gap-y-[20px] h-[90%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
+        <p className="p-[1em] bg-[#E7F3FC]">Reserved Space for Search Filter (???)</p>
+        <Table columns={columns} data={data} />
+      </div>
+      {/* <CreateProject /> */}
+    </div>
+  )
+}
+
+function Table({ columns, data }) {
+  return (
+    <div
+      className="grid w-full border border-transparent rounded-md bg-white" style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
+
+      {columns.map((col, index) => (
+        <div key={`header-${index}`} className="p-[14px] text-[16px] text-[rgba(0,0,0,0.5)] bg-[#F9F9F9] text-center">
+          {col.header}
+        </div>
+      ))}
+
+      {data.map((row, rowIndex) =>
+        columns.map((col, colIndex) => (
+          <div key={`cell-${rowIndex}-${colIndex}`} className="m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-center text-[rgba(0,0,0,0.8)]">
+            {row[col.accessor]}
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+// function CreateProject(){
+//   return(
+//     <button>Create Project</button>
+//   )
+// }

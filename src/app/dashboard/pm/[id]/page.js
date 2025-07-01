@@ -1,7 +1,7 @@
 'use client'
 
 import { Sidebar } from '@/app/components/components';
-import { pmTabs } from '@/app/utilities/utilities';
+import { pmTabs } from '@/app/data/data';
 
 export default function DashboardPage() {
     return (

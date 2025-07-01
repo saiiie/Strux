@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
         );
 
         if (result.rowCount !== 1) {
+            return NextResponse.json({success: false, message: 'Account not found'});
         }
 
         const { account_id, role } = result.rows[0];
@@ -32,8 +33,10 @@ export async function POST(req: NextRequest) {
             role,
             userID,
             message: 'Login successful'
+        });
 
     } catch (error: any) {
         console.error('Login error:', error);
         return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
     }
+}
