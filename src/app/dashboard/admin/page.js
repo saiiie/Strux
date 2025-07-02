@@ -10,8 +10,8 @@ export default function DashboardPage() {
         { header: 'Project ID', accessor: 'projectid' },
         { header: 'Name', accessor: 'projectname' },
         { header: 'Location', accessor: 'location' },
-        { header: 'Project Manager', accessor: 'pmid'}
-        // { header: 'Project Manager', accessor: 'manager' }
+        // { header: 'Project Manager', accessor: 'pmid'}
+        { header: 'Project Manager', accessor: 'project_manager_name' }
         // { header: 'Status', accessor: 'status' }
     ];
 
