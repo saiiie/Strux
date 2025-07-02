@@ -1,0 +1,12 @@
+// /app/api/projects/[pmid]/route.ts
+import { NextResponse } from 'next/server';
+import { getAllProjectsByPM } from '@/lib/queries';
+
+export async function GET(req: Request, { params }: { params: { pmid: string } }) {
+    try {
+        const projects = await getAllProjectsByPM(params.pmid);
+        return NextResponse.json(projects);
+    } catch (err) {
+        return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
+    }
+}
