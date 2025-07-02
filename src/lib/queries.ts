@@ -13,11 +13,13 @@ export const getAllProjects = async () => {
             p.projectid,
             p.projectname,
             p.location,
+            p.status,
+            p.startdate,
+            p.enddate,
+            p.client,
             CONCAT(pm.fname, ' ', pm.lname) AS project_manager_name
-        FROM 
-            projects p
-        JOIN 
-            project_managers pm ON p.projectid = pm.projectid;
+        FROM projects p
+        JOIN project_managers pm ON p.pmid = pm.pmid;
     `);
 
     return result.rows;

@@ -1,37 +1,12 @@
 'use client'
 
-import { Sidebar, Main, CreateProject } from '@/app/components/components';
-import { adminTabs } from '@/app/data/data';
+import { Sidebar, Card, CreateProject } from '@/app/components/components';
+import { adminTabs, projectsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
+import { CirclePlus } from 'lucide-react';
 
 export default function DashboardPage() {
-    // temporary data to see lang if the code worked delete lng after hehe
-    const columns = [
-        { header: 'Project ID', accessor: 'projectid' },
-        { header: 'Name', accessor: 'projectname' },
-        { header: 'Location', accessor: 'location' },
-        // { header: 'Project Manager', accessor: 'pmid'}
-        { header: 'Project Manager', accessor: 'project_manager_name' }
-        // { header: 'Status', accessor: 'status' }
-    ];
-
-    const sampleData = [
-        {
-            project_id: 'P-25-02',
-            name: 'Drainage Improvement',
-            location: 'Mandaue City',
-            manager: 'Engr. Maria Santos',
-            status: 'Pending'
-        },
-        {
-            project_id: 'P-25-03',
-            name: 'Bridge Rehabilitation - Banilad',
-            location: 'Lapu-Lapu City',
-            manager: 'Engr. Roberto Villanueva',
-            status: 'Completed'
-        }
-    ]
-
+    const columns = projectsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [projects, setProjects] = useState([]);
 
@@ -44,7 +19,7 @@ export default function DashboardPage() {
             } catch (error) {
                 setErrorMessage(error);
                 setTimeout(() => setErrorMessage(''), 3000);
-            } 
+            }
         }
         fetchProjects();
     }, []);
@@ -53,8 +28,12 @@ export default function DashboardPage() {
         <>
             <div className='flex h-screen w-screen m-0 p-0'>
                 <Sidebar tabs={adminTabs()} />
-                <Main columns={columns} data={projects} />
+                <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
+                    <Card columns={columns} data={projects} />
+                    <CreateProject text='Create Project' svg={<CirclePlus size={16} color="#152C47" />} />
+                </div>
             </div>
+            {/* <Modal /> */}
         </>
     );
 }

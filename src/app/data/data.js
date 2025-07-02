@@ -23,3 +23,15 @@ export function pmTabs(){
 
     return pmTabs;
 }
+
+export function projectsColumns(){
+    const projColumns = [
+        { header: 'Project ID', accessor: 'projectid' },
+        { header: 'Name', accessor: 'projectname' },
+        { header: 'Location', accessor: 'location' },
+        { header: 'Project Manager', accessor: 'project_manager_name' },
+        { header: 'Status', accessor: 'status' }
+    ];
+
+    return projColumns;
+}

@@ -55,42 +55,75 @@ function SidebarTab({ label, svg, href }) {
   )
 }
 
-export function Main({ columns, data }) {
+export function Card({ columns, data }) {
   return (
-    <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
-      <div className="flex flex-col m-0 p-[1.5em] gap-y-[20px] h-[90%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
-        <p className="p-[1em] bg-[#E7F3FC]">Reserved Space for Search Filter (???)</p>
+    <>
+      <div className="flex flex-col m-0 p-[1.5em] gap-y-[20px] h-[95%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
+        <p className="p-[1em] bg-[rgba(58,138,189,0.2)]">Reserved Space for Search Filter (???)</p>
         <Table columns={columns} data={data} />
       </div>
-      {/* <CreateProject /> */}
-    </div>
+    </>
   )
 }
 
 function Table({ columns, data }) {
+  console.log({ data });
+
   return (
     <div
-      className="grid w-full border border-transparent rounded-md bg-white" style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
+      className="grid w-full border border-transparent rounded-md bg-white overflow-y-auto scrollbar-thin"
+      style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
 
       {columns.map((col, index) => (
-        <div key={`header-${index}`} className="p-[14px] text-[16px] text-[rgba(0,0,0,0.5)] bg-[#F9F9F9] text-center">
+        <div key={`header-${index}`} className="p-[14px] text-[16px] text-[rgba(0,0,0,0.5)] bg-[rgba(58,138,189,0.2)] text-center">
           {col.header}
         </div>
       ))}
 
-      {data.map((row, rowIndex) =>
-        columns.map((col, colIndex) => (
-          <div key={`cell-${rowIndex}-${colIndex}`} className="m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-center text-[rgba(0,0,0,0.8)]">
-            {row[col.accessor]}
-          </div>
-        ))
-      )}
+      {data.map((row, rowIndex) => (
+        <div key={`row-${rowIndex}`} className="contents group">
+          {columns.map((col, colIndex) => (
+            col.accessor === 'status' ? (
+              <Status key={`cell-${rowIndex}-${colIndex}`} status={row[col.accessor]} />
+            ) : (
+              <Cell key={`cell-${rowIndex}-${colIndex}`} data={row[col.accessor]} />
+            )
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
 
-// function CreateProject(){
-//   return(
-//     <button>Create Project</button>
-//   )
-// }
+function Cell({ data }) {
+  return (
+    <div className="flex items-center justify-center m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-[rgba(0,0,0,0.8)] group-hover:bg-[#FAFDFF] transition-colors">
+      {data}
+    </div>
+  )
+}
+
+function Status({ status }) {
+  let color;
+  status == 'Ongoing' ? color = '#e7f3fc'
+    : status == 'Completed' ? color = '#eefee2'
+      : color = '#fae3e3';
+
+  return (
+    <div className="flex justify-center items-center m-0 p-[12px] pt-[16px] pb-[16px] group-hover:bg-[#FAFDFF] transition-colors">
+      <div className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm"
+        style={{ backgroundColor: color }}>
+        {status}
+      </div>
+    </div>
+  )
+}
+
+export function CreateProject({ text, svg }) {
+  return (
+    <button className="flex justify-center items-center gap-x-[8px] w-[15%] m-0 p-[.3em] rounded-sm border 
+    border-[#D0D5DA] bg-white self-end hover:shadow-[0_2px_2px_rgb(12_45_73_/_0.2)] transition-all">
+      {svg} {text}
+    </button>
+  )
+}
