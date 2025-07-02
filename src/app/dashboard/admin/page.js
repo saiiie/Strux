@@ -2,15 +2,17 @@
 
 import { Sidebar, Main, CreateProject } from '@/app/components/components';
 import { adminTabs } from '@/app/data/data';
+import { useState, useEffect } from 'react';
 
 export default function DashboardPage() {
     // temporary data to see lang if the code worked delete lng after hehe
     const columns = [
-        { header: 'Project ID', accessor: 'project_id' },
-        { header: 'Name', accessor: 'name' },
+        { header: 'Project ID', accessor: 'projectid' },
+        { header: 'Name', accessor: 'projectname' },
         { header: 'Location', accessor: 'location' },
-        { header: 'Project Manager', accessor: 'manager' },
-        { header: 'Status', accessor: 'status' }
+        { header: 'Project Manager', accessor: 'pmid'}
+        // { header: 'Project Manager', accessor: 'manager' }
+        // { header: 'Status', accessor: 'status' }
     ];
 
     const sampleData = [
@@ -30,11 +32,28 @@ export default function DashboardPage() {
         }
     ]
 
+    const [errorMessage, setErrorMessage] = useState('');
+    const [projects, setProjects] = useState([]);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                setProjects(data);
+            } catch (error) {
+                setErrorMessage(error);
+                setTimeout(() => setErrorMessage(''), 3000);
+            } 
+        }
+        fetchProjects();
+    }, []);
+
     return (
         <>
             <div className='flex h-screen w-screen m-0 p-0'>
                 <Sidebar tabs={adminTabs()} />
-                <Main columns={columns} data={sampleData} />
+                <Main columns={columns} data={projects} />
             </div>
         </>
     );
