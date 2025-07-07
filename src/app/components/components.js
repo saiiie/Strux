@@ -55,18 +55,18 @@ function SidebarTab({ label, svg, href }) {
   )
 }
 
-export function Card({ columns, data }) {
+export function Card({ columns, data, onRowClick }) {
   return (
     <>
       <div className="flex flex-col m-0 p-[1.5em] gap-y-[20px] h-[95%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
         <p className="p-[1em] bg-[rgba(58,138,189,0.2)]">Reserved Space for Search Filter (???)</p>
-        <Table columns={columns} data={data} />
+        <Table columns={columns} data={data} onRowClick={onRowClick} />
       </div>
     </>
   )
 }
 
-function Table({ columns, data }) {
+function Table({ columns, data, onRowClick = { onRowClick } }) {
   console.log({ data });
 
   return (
@@ -81,10 +81,10 @@ function Table({ columns, data }) {
       ))}
 
       {data.map((row, rowIndex) => (
-        <div key={`row-${rowIndex}`} className="contents group">
+        <div key={`row-${rowIndex}`} className="contents group cursor-pointer" onClick={() => onRowClick(row)}>
           {columns.map((col, colIndex) => (
             col.accessor === 'status' ? (
-              <Status key={`cell-${rowIndex}-${colIndex}`} status={row[col.accessor]} />
+              <Status key={`cell-${rowIndex}-${colIndex}`} status={row[col.accessor]} style=' ' />
             ) : (
               <Cell key={`cell-${rowIndex}-${colIndex}`} data={row[col.accessor]} />
             )
@@ -103,7 +103,7 @@ function Cell({ data }) {
   )
 }
 
-function Status({ status }) {
+function Status({ status, style = '' }) {
   let color;
   status == 'Ongoing' ? color = '#e7f3fc'
     : status == 'Completed' ? color = '#eefee2'
@@ -119,11 +119,51 @@ function Status({ status }) {
   )
 }
 
-export function CreateProject({ text, svg }) {
+export function ProjectDetails({ project, onClose }) {
+  const { projectname, projectid, location, status, client, startdate, enddate, project_manager_name } = project;
+  const start = new Date(startdate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+  const end = new Date(enddate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+
   return (
-    <button className="flex justify-center items-center gap-x-[8px] w-[15%] m-0 p-[.3em] rounded-sm border 
-    border-[#D0D5DA] bg-white self-end hover:shadow-[0_2px_2px_rgb(12_45_73_/_0.2)] transition-all">
+    <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
+      <div className="z-[101] bg-white w-1/2 h-[50%] p-6 rounded shadow-lg flex flex-col items-end">
+        <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
+        <div className="w-full h-full mt-2">
+          <div className="flex justify-between items-center gap-x-[10px] h-fit w-full m-0 mb-5 p-0 border-b border-[rgba(0,0,0,0.6)]">
+            <h1 className="text-[22px] font-medium p-0 pb-[5px] m-0">{projectname}: {location}</h1>
+            {/* <Status status={status}/> */}
+          </div>
+          <div className="flex flex-col gap-y-[16px]">
+            <p className="font-light text-[17px]"><span className="font-medium">Client:</span> {client}</p>
+            <p className="font-light text-[17px]"><span className="font-medium">Project Manager:</span> {project_manager_name}</p>
+            <p className="font-light text-[17px]"><span className="font-medium">Project Location:</span> {location}</p>
+            <p className="font-light text-[17px]"><span className="font-medium">Start Date:</span> {new Date(startdate).toLocaleDateString('en-US', {
+              year: 'numeric', month: 'long', day: 'numeric'})}</p>
+            <p className="font-light text-[17px]"><span className="font-medium">End Date:</span> {new Date(enddate).toLocaleDateString('en-US', {
+              year: 'numeric', month: 'long', day: 'numeric'})}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function CreateProject({ text, svg, onClick }) {
+  return (
+    <button onClick={onClick} className="flex justify-center items-center gap-x-[8px] w-[15%] m-0 p-[.3em] rounded-sm border 
+    border-[#D0D5DA] bg-white self-end cursor-pointer hover:shadow-[0_2px_2px_rgb(12_45_73_/_0.2)] transition-all">
       {svg} {text}
     </button>
+  )
+}
+
+export function CreateProjModal({ onClose }){
+  return(
+    <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
+      <div className="z-[101] bg-white w-[40%] h-[45%] p-6 rounded shadow-lg flex flex-col items-end">
+        <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
+        HELLO
+      </div>
+    </div>
   )
 }
