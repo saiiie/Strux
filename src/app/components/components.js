@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export function Box({ children, className }) {
   return (
@@ -24,6 +25,19 @@ export function InputField({ label, type = "text", name, placeholder, value, onC
         hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
       />
     </div>
+  )
+}
+
+export function SubmitButton({ text }) {
+  return (
+    <button
+      type="submit"
+      className="py-2 bg-[#0C2D49] text-[#FBFBFB] font-medium rounded-md
+                hover:text-[#0C2D49] hover:bg-[#FBFBFB]
+                hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)]
+                transition-all mt-0">
+      {text}
+    </button>
   )
 }
 
@@ -121,8 +135,8 @@ function Status({ status, style = '' }) {
 
 export function ProjectDetails({ project, onClose }) {
   const { projectname, projectid, location, status, client, startdate, enddate, project_manager_name } = project;
-  const start = new Date(startdate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
-  const end = new Date(enddate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+  const start = new Date(startdate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const end = new Date(enddate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
     <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
@@ -138,9 +152,11 @@ export function ProjectDetails({ project, onClose }) {
             <p className="font-light text-[17px]"><span className="font-medium">Project Manager:</span> {project_manager_name}</p>
             <p className="font-light text-[17px]"><span className="font-medium">Project Location:</span> {location}</p>
             <p className="font-light text-[17px]"><span className="font-medium">Start Date:</span> {new Date(startdate).toLocaleDateString('en-US', {
-              year: 'numeric', month: 'long', day: 'numeric'})}</p>
+              year: 'numeric', month: 'long', day: 'numeric'
+            })}</p>
             <p className="font-light text-[17px]"><span className="font-medium">End Date:</span> {new Date(enddate).toLocaleDateString('en-US', {
-              year: 'numeric', month: 'long', day: 'numeric'})}</p>
+              year: 'numeric', month: 'long', day: 'numeric'
+            })}</p>
           </div>
         </div>
       </div>
@@ -157,12 +173,96 @@ export function CreateProject({ text, svg, onClick }) {
   )
 }
 
-export function CreateProjModal({ onClose }){
-  return(
+export function CreateProjModal({ onClose }) {
+
+  const [formData, setFormData] = useState({
+    projectName: '',
+    location: '',
+    status: 'Ongoing',
+    client: '',
+    pmid: '',
+    startdate: '',
+    enddate: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.projectName.trim()) {
+      e.preventDefault();
+      return;
+    }
+
+    try {
+
+      const data = await addProject(formData);
+
+    } catch (err) {
+
+    }
+  }
+
+  return (
     <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-      <div className="z-[101] bg-white w-[40%] h-[45%] p-6 rounded shadow-lg flex flex-col items-end">
-        <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
-        HELLO
+      <div className="z-[101] bg-white w-[40%] h-[65%] p-6 rounded shadow-lg flex flex-col">
+        <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer self-end">X</button>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-y-[15px] mt-4 m-0">
+
+          <InputField
+            label="Project Name"
+            name="projectName"
+            placeholder="Enter Project Name"
+            value={formData.projectName}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Project Location"
+            name="location"
+            placeholder="Enter Location"
+            value={formData.location}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Client"
+            name="client"
+            placeholder="Enter Client Name"
+            value={formData.client}
+            onChange={handleChange}
+          />
+
+          {/* <select name="pmid" value={formData.pmid} onChange={handleChange}>
+            <option value="">Select Project Manager</option>
+            {managers.map((pm) => (
+              <option key={pm.pmid} value={pm.pmid}>
+                {pm.fname} {pm.lname}
+              </option>
+            ))}
+          </select> */}
+
+          <InputField
+            label="Start Date"
+            name="startdate"
+            placeholder="Enter Start Date"
+            value={formData.startdate}
+            onChange={handleChange}
+          />
+          <InputField
+            label="End Date"
+            name="enddate"
+            placeholder="Enter End Date"
+            value={formData.enddate}
+            onChange={handleChange}
+          />
+
+          <SubmitButton text="Create Project" />
+        </form>
+
       </div>
     </div>
   )

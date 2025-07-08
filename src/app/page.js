@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Box, InputField } from '@/app/components/components';
+import { Box, InputField, SubmitButton } from '@/app/components/components';
 import loginUser from '@/lib/auth';
 
 export default function LogInPage() {
@@ -94,14 +94,7 @@ export default function LogInPage() {
                   {errorMessage || ' '}
                 </p>
               </div>
-              <button
-                type="submit"
-                className="py-2 bg-[#0C2D49] text-[#FBFBFB] font-medium rounded-md
-                hover:text-[#0C2D49] hover:bg-[#FBFBFB]
-                hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)]
-                transition-all mt-0">
-                Continue
-              </button>
+              <SubmitButton text="Continue" />
             </form>
           </div>
         </Box>
