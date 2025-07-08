@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import addProject from "@/lib/projects/add";
 
 export function Box({ children, className }) {
   return (
@@ -178,12 +179,29 @@ export function CreateProjModal({ onClose }) {
   const [formData, setFormData] = useState({
     projectName: '',
     location: '',
-    status: 'Ongoing',
-    client: '',
-    pmid: '',
-    startdate: '',
-    enddate: '',
+    pmid: ''
+    // status: 'Ongoing',
+    // client: '',
+    // pmid: '',
+    // startdate: '',
+    // enddate: '',
   });
+  const [ managers, setManagers] = useState([]);
+
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const response = await fetch('/api/projects/projectManagers');
+        const data = await response.json();
+        setManagers(data);
+      } catch (err) {
+        console.log(err);
+      }
+    } 
+    fetchManagers();
+
+  }, []);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -199,10 +217,15 @@ export function CreateProjModal({ onClose }) {
 
     try {
 
-      const data = await addProject(formData);
-
+      const response = await addProject(formData);
+      if (response.success) {
+        console.log(response);
+        onClose();
+      } else {
+        console.error('Project creation failed:', response);
+      }
     } catch (err) {
-
+      console.error('Error while creating project:', err);
     }
   }
 
@@ -228,24 +251,26 @@ export function CreateProjModal({ onClose }) {
             value={formData.location}
             onChange={handleChange}
           />
-          <InputField
+
+
+          {/* <InputField
             label="Client"
             name="client"
             placeholder="Enter Client Name"
             value={formData.client}
             onChange={handleChange}
-          />
+          /> */}
 
-          {/* <select name="pmid" value={formData.pmid} onChange={handleChange}>
+          <select name="pmid" value={formData.pmid} onChange={handleChange}>
             <option value="">Select Project Manager</option>
             {managers.map((pm) => (
               <option key={pm.pmid} value={pm.pmid}>
                 {pm.fname} {pm.lname}
               </option>
             ))}
-          </select> */}
+          </select>
 
-          <InputField
+          {/* <InputField
             label="Start Date"
             name="startdate"
             placeholder="Enter Start Date"
@@ -258,7 +283,7 @@ export function CreateProjModal({ onClose }) {
             placeholder="Enter End Date"
             value={formData.enddate}
             onChange={handleChange}
-          />
+          /> */}
 
           <SubmitButton text="Create Project" />
         </form>

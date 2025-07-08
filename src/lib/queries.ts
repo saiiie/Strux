@@ -24,3 +24,11 @@ export const getAllProjects = async () => {
 
     return result.rows;
 };
+
+
+export const getAllPM = async () => {
+    const result = await pool.query(`
+        SELECT pmid, fname, lname FROM project_managers
+    `);
+    return result.rows;
+}
