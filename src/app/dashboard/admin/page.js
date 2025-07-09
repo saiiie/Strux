@@ -50,10 +50,15 @@ export default function DashboardPage() {
 
 function CreateProjModal({ onClose }) {
     const [formData, setFormData] = useState({
+        client: '',
         projectName: '',
         location: '',
+        startdate: '',
+        enddate: '',
+        status: '',
         pmid: '',
     });
+
 
     const [managers, setManagers] = useState([]);
 
@@ -107,6 +112,15 @@ function CreateProjModal({ onClose }) {
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-y-[15px] mt-4 m-0"
                 >
+
+                    <InputField
+                        label="Client"
+                        name="client"
+                        placeholder="Enter Client Name"
+                        value={formData.client}
+                        onChange={handleChange}
+                    />
+
                     <InputField
                         label="Project Name"
                         name="projectName"
@@ -121,6 +135,41 @@ function CreateProjModal({ onClose }) {
                         value={formData.location}
                         onChange={handleChange}
                     />
+
+                    <InputField
+                        type='date'
+                        label="Start Data"
+                        name="startdate"
+                        placeholder="Enter Start Date"
+                        value={formData.startdate}
+                        onChange={handleChange}
+                    />
+
+                    <InputField
+                        type='date'
+                        label="End Date"
+                        name="enddate"
+                        placeholder="Enter End Date"
+                        value={formData.enddate}
+                        onChange={handleChange}
+                    />
+
+                    <label htmlFor="status" className="text-sm text-[#0C2D49] font-medium">
+                        Project Status
+                    </label>
+                    <select
+                        id="status"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className={`px-2 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
+                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all ${formData.pmid === '' ? 'text-gray-400' : 'text-black'
+                            }`}>
+                        <option disabled value="">Select Status</option>
+                        <option value='Ongoing'>Ongoing</option>
+                        <option value='Completed'>Completed</option>
+                        <option value='Cancelled'>Cancelled</option>
+                    </select>
 
                     <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium">
                         Project Manager
@@ -140,7 +189,6 @@ function CreateProjModal({ onClose }) {
                             </option>
                         ))}
                     </select>
-
                     <SubmitButton text="Create Project" />
                 </form>
             </div>

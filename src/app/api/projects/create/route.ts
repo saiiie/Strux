@@ -5,11 +5,11 @@ import { pool } from '@/lib/db';
 export const POST = async (req: NextRequest) => {
     try {
         
-        const { projectName, location } = await req.json();
+        const { pmid, projectName, location, startdate, enddate, status, client} = await req.json();
 
         const result = await pool.query(
-            'INSERT INTO projects (projectName, location) VALUES ($1, $2) returning *',
-            [projectName, location]
+            'INSERT INTO projects (pmid, projectName, location, startdate, enddate, status, client) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *',
+            [pmid, projectName, location, startdate, enddate, status, client]
         );
 
         return NextResponse.json({success: true, project: result.rows[0]});
