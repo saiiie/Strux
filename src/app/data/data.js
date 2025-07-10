@@ -36,6 +36,12 @@ export function projectsColumns(){
     return projColumns;
 }
 
-// export function logsColumns(){
-//     return 1;
-// }
+export function accountsColumns(){
+    const accountColumns = [
+        {header: 'User ID', accessor: 'username'},
+        {header: 'Full Name', accessor: 'name'},
+        {header: 'Role', accessor: 'role'},
+    ];
+
+    return accountColumns;
+}

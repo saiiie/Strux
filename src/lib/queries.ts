@@ -32,3 +32,20 @@ export const getAllPM = async () => {
     `);
     return result.rows;
 }
+
+export const getAllAccounts = async () => {
+    const result = await pool.query(`
+        SELECT 
+            a.username,
+            a.role,
+            CONCAT(pm.fname, ' ', pm.lname) AS name
+        FROM 
+            accounts a
+        JOIN 
+            project_managers pm ON a.account_id = pm.account_id
+        WHERE 
+            a.role = 'Project Manager';
+    `);
+
+    return result.rows;
+}
