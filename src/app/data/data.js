@@ -3,10 +3,10 @@ import { Folder, File, Clipboard, User, LogOut } from 'lucide-react';
 
 export function adminTabs(){
     const adminTabs = [
-        { label: "Projects", svg: <Folder size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },
-        { label: "Inventory Logs", svg: <File size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },
-        { label: "Material Requests", svg: <Clipboard size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },
-        { label: "Accounts", svg: <User size={28} color="#FBFBFB"/>, href: "/dashboard/admin" },
+        { label: "Projects", svg: <Folder size={28} color="#FBFBFB"/>, href: "/dashboard/admin/projects" },
+        { label: "Inventory Logs", svg: <File size={28} color="#FBFBFB"/>, href: "/dashboard/admin/inventory-logs" },
+        { label: "Material Requests", svg: <Clipboard size={28} color="#FBFBFB"/>, href: "/dashboard/admin/material-requests" },
+        { label: "Accounts", svg: <User size={28} color="#FBFBFB"/>, href: "/dashboard/admin/accounts" },
         { label: "Log Out", svg: <LogOut size={26} color="#FBFBFB"/>, href: "/dashboard/admin" }
     ]
 
@@ -35,3 +35,7 @@ export function projectsColumns(){
 
     return projColumns;
 }
+
+// export function logsColumns(){
+//     return 1;
+// }

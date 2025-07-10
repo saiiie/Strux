@@ -36,7 +36,7 @@ export default function LogInPage() {
         setErrorMessage('Invalid user or password.');
         setTimeout(() => setErrorMessage(''), 3000);
       } else if (data.role === 'admin') {
-        router.push('/dashboard/admin');
+        router.push('/dashboard/admin/projects');
       } else if (data.role === 'pm') {
         router.push(`/dashboard/pm/${data.userID}`);
       }

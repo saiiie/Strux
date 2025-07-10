@@ -13,7 +13,7 @@ export function Box({ children, className }) {
 export function InputField({ label, type = "text", name, placeholder, value, onChange }) {
   return (
     <div className="flex flex-col gap-y-[5px] w-full m-0 p-0">
-      <label htmlFor={name} className="text-sm text-[#0C2D49] font-medium"> {label} </label>
+      <label htmlFor={name} className="text-sm text-[#0C2D49] font-medium m-0"> {label} </label>
       <input
         type={type}
         name={name}
@@ -63,7 +63,7 @@ function SidebarTab({ label, svg, href }) {
             rounded-md hover:bg-[#FBFBFB]/20 transition-all
             ">
         {svg}
-        <span className="text-[16px] text-[#FBFBFB] font-medium">{label}</span>
+        <span className="text-[15px] text-[#FBFBFB] font-medium">{label}</span>
       </div>
     </Link>
   )
@@ -73,7 +73,7 @@ export function Card({ columns, data, onRowClick }) {
   return (
     <>
       <div className="flex flex-col m-0 p-[1.5em] gap-y-[20px] h-[95%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
-        <p className="p-[1em] bg-[rgba(58,138,189,0.2)]">Reserved Space for Search Filter (???)</p>
+        <p className="p-[1em] text-[#FBFBFB] text-sm bg-[#0C2D49]">Reserved Space for Search Filter (???)</p>
         <Table columns={columns} data={data} onRowClick={onRowClick} />
       </div>
     </>
@@ -89,7 +89,7 @@ function Table({ columns, data, onRowClick = { onRowClick } }) {
       style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
 
       {columns.map((col, index) => (
-        <div key={`header-${index}`} className="p-[14px] text-[16px] text-[rgba(0,0,0,0.5)] bg-[rgba(58,138,189,0.2)] text-center">
+        <div key={`header-${index}`} className="p-[14px] text-sm text-[#FBFBFB] bg-[#0C2D49] text-center mb-2">
           {col.header}
         </div>
       ))}
@@ -133,41 +133,12 @@ function Status({ status, style = '' }) {
   )
 }
 
-export function ProjectDetails({ project, onClose }) {
-  const { projectname, projectid, location, status, client, startdate, enddate, project_manager_name } = project;
-  const start = new Date(startdate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const end = new Date(enddate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+// export 
 
+export function CreateButton({ text, svg, onClick }) {
   return (
-    <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-      <div className="z-[101] bg-white w-1/2 h-[50%] p-6 rounded shadow-lg flex flex-col items-end">
-        <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
-        <div className="w-full h-full mt-2">
-          <div className="flex justify-between items-center gap-x-[10px] h-fit w-full m-0 mb-5 p-0 border-b border-[rgba(0,0,0,0.6)]">
-            <h1 className="text-[22px] font-medium p-0 pb-[5px] m-0">{projectname}: {location}</h1>
-            {/* <Status status={status}/> */}
-          </div>
-          <div className="flex flex-col gap-y-[16px]">
-            <p className="font-light text-[17px]"><span className="font-medium">Client:</span> {client}</p>
-            <p className="font-light text-[17px]"><span className="font-medium">Project Manager:</span> {project_manager_name}</p>
-            <p className="font-light text-[17px]"><span className="font-medium">Project Location:</span> {location}</p>
-            <p className="font-light text-[17px]"><span className="font-medium">Start Date:</span> {new Date(startdate).toLocaleDateString('en-US', {
-              year: 'numeric', month: 'long', day: 'numeric'
-            })}</p>
-            <p className="font-light text-[17px]"><span className="font-medium">End Date:</span> {new Date(enddate).toLocaleDateString('en-US', {
-              year: 'numeric', month: 'long', day: 'numeric'
-            })}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function CreateProject({ text, svg, onClick }) {
-  return (
-    <button onClick={onClick} className="flex justify-center items-center gap-x-[8px] w-[15%] m-0 p-[.3em] rounded-sm border 
-    border-[#D0D5DA] bg-white self-end cursor-pointer hover:shadow-[0_2px_2px_rgb(12_45_73_/_0.2)] transition-all">
+    <button onClick={onClick} className="flex justify-center items-center gap-x-[8px] w-[15%] m-0 p-[.5em] rounded-sm border text-[#FBFBFB] text-sm
+    border-transparent bg-[#0C2D49] self-end cursor-pointer hover:shadow-[0_2px_2px_rgb(12_45_73_/_0.2)] transition-all">
       {svg} {text}
     </button>
   )
