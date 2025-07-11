@@ -55,8 +55,14 @@ export const getAllLogs = async () => {
         SELECT 
             l.log_id,
             l.log_date,
+            p.projectname,
+            p.location,
+            CONCAT(pm.fname, ' ', pm.lname) AS project_manager
         FROM inventory_logs l
+        JOIN projects p ON l.projectid = p.projectid
+        JOIN project_managers pm ON p.pmid = pm.pmid
+        ORDER BY l.log_date DESC;
     `);
 
     return result.rows;
-}
+};
