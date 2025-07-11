@@ -57,6 +57,7 @@ export function Sidebar({ tabs }) {
 }
 
 function SidebarTab({ label, svg, href }) {
+
   return (
     <Link href={href} className="p-0 m-0 h-fit w-[95%]">
       <div className="
@@ -71,17 +72,28 @@ function SidebarTab({ label, svg, href }) {
 }
 
 export function Card({ columns, data, onRowClick }) {
+
+  const [input, setInput] = useState('');
+
+  const filteredData = data.filter(row =>
+    columns.some(col => 
+      String(row[col.accessor])?.toLowerCase().includes(input.toLowerCase())
+    )
+  );
+
   return (
     <>
       <div className="flex flex-col m-0 p-[1.5em] gap-y-[10px] h-[95%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
-        <SearchBar />
-        <Table columns={columns} data={data} onRowClick={onRowClick} />
+        <SearchBar input={input} setInput={setInput} />
+        <Table columns={columns} data={filteredData} onRowClick={onRowClick} />
       </div>
     </>
   )
 }
 
-function SearchBar(){
+function SearchBar({input, setInput}){
+
+
   return(
     <div className="flex justify-between m-0 p-[.5em]">
       <div className="flex p-0 m-0 h-[100%] w-[50%] rounded-sm bg-[#F9F9F9] border border-[rgba(202,202,202,0.5)]">
@@ -89,8 +101,11 @@ function SearchBar(){
           <Search className="h-5 w-5 text-[#0C2D49]" />
         </div>
         <input
-          type="text" placeholder="Search"
           className="w-full h-full m-0 p-[.5em] text-base bg-none border-none outline-0"
+          type="text" 
+          placeholder="Search"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
       </div>
 
