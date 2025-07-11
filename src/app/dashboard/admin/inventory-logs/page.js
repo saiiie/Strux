@@ -1,31 +1,30 @@
 'use client'
 
 import { Sidebar, Card, CreateButton, SubmitButton, InputField } from '@/app/components/components';
-import { adminTabs, accountsColumns } from '@/app/data/data';
+import { adminTabs, logsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
 import { CirclePlus } from 'lucide-react';
-import addAccount from "@/lib/accounts/add";
 
 export default function DashboardPage() {
-    const columns = accountsColumns();
+    const columns = logsColumns();
     const [errorMessage, setErrorMessage] = useState('');
-    const [accounts, setAccounts] = useState([]);
+    const [logs, setLogs] = useState([]);
     // const [showDetailsModal, setShowDetailsModal] = useState(false);
     // const [viewProject, setViewProject] = useState(null);
     const [createAcc, setCreateAcc] = useState(false);
 
     useEffect(() => {
-        const fetchAccounts = async () => {
+        const fetchLogs = async () => {
             try {
-                const response = await fetch('/api/accounts/accounts');
+                const response = await fetch('/api/logs');
                 const data = await response.json();
-                setAccounts(data);
+                setLogs(data);
             } catch (error) {
                 setErrorMessage(error);
                 setTimeout(() => setErrorMessage(''), 3000);
             }
         }
-        fetchAccounts();
+        fetchLogs();
     }, []);
 
     return (
@@ -33,12 +32,12 @@ export default function DashboardPage() {
             <div className='flex h-screen w-screen m-0 p-0'>
                 <Sidebar tabs={adminTabs()} />
                 <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
-                    <Card columns={columns} data={accounts}
-                        onRowClick={(accounts) => {
-                            setViewProject(accounts);
+                    <Card columns={columns} data={logs}
+                        onRowClick={(logs) => {
+                            setViewProject(logs);
                             setShowDetailsModal(true);
                         }} />
-                    <CreateButton text='Create Account' svg={<CirclePlus size={16} color="#FBFBFB" />} onClick={() => setCreateAcc(true)} />
+                    {/* <CreateButton text='Create Account' svg={<CirclePlus size={16} color="#FBFBFB" />} onClick={() => setCreateAcc(true)} /> */}
                 </div>
             </div>
 

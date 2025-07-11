@@ -129,9 +129,18 @@ function Table({ columns, data, onRowClick = { onRowClick } }) {
 }
 
 function Cell({ data }) {
+  let display = data;
+
+  if (typeof data === 'string' && data.includes('T') && data.includes('.000Z')) {
+    const [datePart, timePart] = data.split('T');
+    const timeOnly = timePart.split('.')[0];
+    const [hour, minute] = timeOnly.split(':');
+    display = `${datePart} ${hour}:${minute}`;
+  }
+
   return (
     <div className="flex items-center justify-center m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-[rgba(0,0,0,0.8)] group-hover:bg-[#FAFDFF] transition-colors">
-      {data}
+      {display}
     </div>
   )
 }

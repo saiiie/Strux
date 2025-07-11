@@ -43,3 +43,13 @@ export function accountsColumns(){
 
     return accountColumns;
 }
+
+export function logsColumns(){
+    const logColumns = [
+        {header: 'Log ID', accessor: 'log_id'},
+        {header: 'Project', accessor: 'projectname'},
+        {header: 'Log Date', accessor: 'log_date'},
+    ];
+
+    return logColumns;
+}
