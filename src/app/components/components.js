@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { Search } from 'lucide-react';
 
 export function Box({ children, className }) {
   return (
@@ -72,11 +73,29 @@ function SidebarTab({ label, svg, href }) {
 export function Card({ columns, data, onRowClick }) {
   return (
     <>
-      <div className="flex flex-col m-0 p-[1.5em] gap-y-[20px] h-[95%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
-        <p className="p-[1em] text-[#FBFBFB] text-sm bg-[#0C2D49]">Reserved Space for Search Filter (???)</p>
+      <div className="flex flex-col m-0 p-[1.5em] gap-y-[10px] h-[95%] w-[100%] border border-[#0C2D4933] rounded-md bg-[#FFFFFF]">
+        <SearchBar />
         <Table columns={columns} data={data} onRowClick={onRowClick} />
       </div>
     </>
+  )
+}
+
+function SearchBar(){
+  return(
+    <div className="flex justify-between m-0 p-[.5em]">
+      <div className="flex p-0 m-0 h-[100%] w-[50%] rounded-sm bg-[#F9F9F9] border border-[rgba(202,202,202,0.5)]">
+        <div className="flex items-center justify-center h-full p-0 pl-[.8em] m-0 w-fit">
+          <Search className="h-5 w-5 text-[#0C2D49]" />
+        </div>
+        <input
+          type="text" placeholder="Search"
+          className="w-full h-full m-0 p-[.5em] text-base bg-none border-none outline-0"
+        />
+      </div>
+
+      <div className="m-0 w-fit h-[100%] p-[.5em] border text-sm">Dropdown Status Placeholder</div>
+    </div>
   )
 }
 
@@ -131,9 +150,7 @@ function Status({ status, style = '' }) {
       </div>
     </div>
   )
-}
-
-// export 
+} 
 
 export function CreateButton({ text, svg, onClick }) {
   return (

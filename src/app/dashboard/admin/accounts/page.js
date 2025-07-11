@@ -10,8 +10,6 @@ export default function DashboardPage() {
     const columns = accountsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
-    // const [showDetailsModal, setShowDetailsModal] = useState(false);
-    // const [viewProject, setViewProject] = useState(null);
     const [createAcc, setCreateAcc] = useState(false);
 
     useEffect(() => {

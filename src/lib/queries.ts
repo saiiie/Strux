@@ -49,3 +49,14 @@ export const getAllAccounts = async () => {
 
     return result.rows;
 }
+
+export const getAllLogs = async () => {
+    const result = await pool.query(`
+        SELECT 
+            l.log_id,
+            l.log_date,
+        FROM inventory_logs l
+    `);
+
+    return result.rows;
+}
