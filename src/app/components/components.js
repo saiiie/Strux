@@ -76,7 +76,7 @@ export function Card({ columns, data, onRowClick }) {
   const [input, setInput] = useState('');
 
   const filteredData = data.filter(row =>
-    columns.some(col => 
+    columns.some(col =>
       String(row[col.accessor])?.toLowerCase().includes(input.toLowerCase())
     )
   );
@@ -91,10 +91,10 @@ export function Card({ columns, data, onRowClick }) {
   )
 }
 
-function SearchBar({input, setInput}){
+function SearchBar({ input, setInput }) {
 
 
-  return(
+  return (
     <div className="flex justify-between m-0 p-[.5em]">
       <div className="flex p-0 m-0 h-[100%] w-[50%] rounded-sm bg-[#F9F9F9] border border-[rgba(202,202,202,0.5)]">
         <div className="flex items-center justify-center h-full p-0 pl-[.8em] m-0 w-fit">
@@ -102,7 +102,7 @@ function SearchBar({input, setInput}){
         </div>
         <input
           className="w-full h-full m-0 p-[.5em] text-base bg-none border-none outline-0"
-          type="text" 
+          type="text"
           placeholder="Search"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -129,14 +129,36 @@ function Table({ columns, data, onRowClick = { onRowClick } }) {
       ))}
 
       {data.map((row, rowIndex) => (
-        <div key={`row-${rowIndex}`} className="contents group cursor-pointer" onClick={() => onRowClick(row)}>
-          {columns.map((col, colIndex) => (
-            col.accessor === 'status' ? (
-              <Status key={`cell-${rowIndex}-${colIndex}`} status={row[col.accessor]} style=' ' />
-            ) : (
-              <Cell key={`cell-${rowIndex}-${colIndex}`} data={row[col.accessor]} />
-            )
-          ))}
+        <div
+          key={`row-${rowIndex}`}
+          className="contents group cursor-pointer"
+          onClick={() => onRowClick(row)}
+        >
+          {columns.map((col, colIndex) => {
+            if (col.accessor === 'status') {
+              return (
+                <Status
+                  key={`cell-${rowIndex}-${colIndex}`}
+                  status={row[col.accessor]}
+                />
+              );
+            }
+            if (col.accessor === 'is_active') {
+              return (
+                <Status
+                  key={`cell-${rowIndex}-${colIndex}`}
+                  status={row[col.accessor]}
+                />
+              );
+            }
+            return (
+              <Cell
+                key={`cell-${rowIndex}-${colIndex}`}
+                data={row[col.accessor]}
+              />
+            );
+          }
+          )}
         </div>
       ))}
     </div>
@@ -145,8 +167,11 @@ function Table({ columns, data, onRowClick = { onRowClick } }) {
 
 function Cell({ data }) {
   let display = data;
+  if (data === null || data === undefined || data === '') {
+    display = 'N/A';
+  }
 
-  if (typeof data === 'string' && data.includes('T') && data.includes('.000Z')) {
+  else if (typeof data === 'string' && data.includes('T') && data.includes('.000Z')) {
     const [datePart, timePart] = data.split('T');
     const timeOnly = timePart.split('.')[0];
     const [hour, minute] = timeOnly.split(':');
@@ -157,24 +182,43 @@ function Cell({ data }) {
     <div className="flex items-center justify-center m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-[rgba(0,0,0,0.8)] group-hover:bg-[#FAFDFF] transition-colors">
       {display}
     </div>
-  )
+  );
 }
 
-function Status({ status, style = '' }) {
-  let color;
-  status == 'Ongoing' ? color = '#e7f3fc'
-    : status == 'Completed' ? color = '#eefee2'
-      : color = '#fae3e3';
+
+function Status({ status }) {
+  let label = '';
+  let color = '';
+
+  if (status === true || status === 'Active') {
+    label = 'Active';
+    color = '#e7f3fc'; 
+  } else if (status === false || status === 'Deactivated') {
+    label = 'Deactivated';
+    color = '#fae3e3';
+  } else if (status === 'Ongoing') {
+    label = 'Ongoing';
+    color = '#e7f3fc';
+  } else if (status === 'Completed') {
+    label = 'Completed';
+    color = '#eefee2'; 
+  } else {
+    label = status || 'Unknown';
+    color = '#f0f0f0'; 
+  }
 
   return (
     <div className="flex justify-center items-center m-0 p-[12px] pt-[16px] pb-[16px] group-hover:bg-[#FAFDFF] transition-colors">
-      <div className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm"
-        style={{ backgroundColor: color }}>
-        {status}
+      <div
+        className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm"
+        style={{ backgroundColor: color }}
+      >
+        {label}
       </div>
     </div>
-  )
-} 
+  );
+}
+
 
 export function CreateButton({ text, svg, onClick }) {
   return (

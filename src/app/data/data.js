@@ -1,3 +1,4 @@
+// import { access } from 'fs';
 import { Folder, File, Clipboard, User, LogOut } from 'lucide-react';
 
 export function adminTabs(){
@@ -38,7 +39,8 @@ export function accountsColumns(){
     const accountColumns = [
         {header: 'User ID', accessor: 'username'},
         {header: 'Full Name', accessor: 'name'},
-        {header: 'Role', accessor: 'role'},
+        {header: 'Project', accessor: 'projectname'},
+        {header: 'Status', accessor: 'is_active'},
     ];
 
     return accountColumns;

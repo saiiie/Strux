@@ -16,12 +16,13 @@ export default function DashboardPage() {
     useEffect(() => {
         const fetchLogs = async () => {
             try {
-                const response = await fetch('/api/logs');
+                const response = await fetch('/api/projects/logs');
                 const data = await response.json();
                 setLogs(data);
             } catch (error) {
                 setErrorMessage(error);
                 setTimeout(() => setErrorMessage(''), 3000);
+                
             }
         }
         fetchLogs();

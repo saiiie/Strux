@@ -10,6 +10,8 @@ export default function DashboardPage() {
     const columns = accountsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [viewAccount, setViewAccount] = useState(null);
     const [createAcc, setCreateAcc] = useState(false);
 
     useEffect(() => {
@@ -18,6 +20,7 @@ export default function DashboardPage() {
                 const response = await fetch('/api/accounts/accounts');
                 const data = await response.json();
                 setAccounts(data);
+                console.log(data);
             } catch (error) {
                 setErrorMessage(error);
                 setTimeout(() => setErrorMessage(''), 3000);
@@ -33,17 +36,88 @@ export default function DashboardPage() {
                 <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
                     <Card columns={columns} data={accounts}
                         onRowClick={(accounts) => {
-                            setViewProject(accounts);
+                            setViewAccount(accounts);
                             setShowDetailsModal(true);
                         }} />
                     <CreateButton text='Create Account' svg={<CirclePlus size={16} color="#FBFBFB" />} onClick={() => setCreateAcc(true)} />
                 </div>
             </div>
 
+            {showDetailsModal && <ShowAccount account={viewAccount} onClose={() => setShowDetailsModal(false)} />};
             {createAcc && <CreateAccModal onClose={() => setCreateAcc(false)} />};
         </>
     );
 }
+
+const ShowAccount = ({ account, onClose }) => {
+    const { username, password, projectname, name } = account;
+    const [isActive, setIsActive] = useState(account.is_active);
+
+    const handleChange = (e) => {
+        setIsActive(e.target.value === 'true');
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('/api/accounts/deactivate', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    is_active: isActive
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('failed to update');
+            } else {
+                console.log('account status updated');
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('error:', error);
+        }
+    };
+
+    return (
+        <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
+            <div className="z-[101] bg-white w-[45%] h-[40%] p-10 pt-8 rounded shadow-lg flex flex-col items-end">
+                <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
+                <div className="w-full h-full mt-2">
+                    <div className="flex justify-between items-center gap-x-[10px] h-fit w-full m-0 mb-5 p-0 border-b border-[rgba(0,0,0,0.6)]">
+                        <h1 className="text-[22px] font-medium p-0 pb-[5px] m-0">Name: {name}</h1>
+                    </div>
+                    <div className="flex flex-col gap-y-[16px]">
+                        <p className="font-light text-[17px]"><span className="font-medium">Project Assigned:</span> {projectname || 'N/A'}</p>
+                        <p className="font-light text-[17px]"><span className="font-medium">Username:</span> {username}</p>
+                        <p className="font-light text-[17px]"><span className="font-medium">Password:</span> {password}</p>
+
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-y-[10px] mt-4">
+                            <label htmlFor="is_active" className="text-sm font-medium">Account Status</label>
+                            <select
+                                id="is_active"
+                                value={String(isActive)}
+                                onChange={handleChange}
+                                className="px-2 py-2 border border-gray-300 rounded text-sm"
+                            >
+                                <option disabled value="">Select Project Manager</option>
+                                <option value="true">Active</option>
+                                <option value="false">Deactivated</option>
+                            </select>
+                            <SubmitButton text="Create Project" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+}
+
 
 function CreateAccModal({ onClose }) {
     const [formData, setFormData] = useState({

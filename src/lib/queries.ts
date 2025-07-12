@@ -37,17 +37,29 @@ export const getAllAccounts = async () => {
     const result = await pool.query(`
         SELECT 
             a.username,
-            a.role,
-            CONCAT(pm.fname, ' ', pm.lname) AS name
+            a.password,
+            p.projectname,
+            CONCAT(pm.fname, ' ', pm.lname) AS name,
+            a.is_active
         FROM 
             accounts a
         JOIN 
             project_managers pm ON a.account_id = pm.account_id
+        LEFT JOIN
+            projects p ON p.pmid = pm.pmid
         WHERE 
             a.role = 'Project Manager';
     `);
-
     return result.rows;
+}
+
+export const changeAccountStatus = async ({newStatus, username}) => {
+    const result = await pool.query(`
+            UPDATE accounts
+            SET is_active = $1
+            WHERE username = $2;
+        `, [newStatus, username]);
+        return result.rowCount;
 }
 
 export const getAllLogs = async () => {
