@@ -118,3 +118,52 @@ export const getLogEntriesByLogId = async (log_id: string) => {
 
   return result.rows;
 };
+
+
+export async function createLogEntry(entry) {
+  const {
+    beginning_qty,
+    qty_received,
+    qty_used,
+    ending_qty,
+    project_id,
+    pm_id,
+    log_date,
+  } = entry;
+
+  // Validate required fields
+
+  if (!log_date) {
+    throw new Error(`Missing required field: log_date`);
+  }
+  // Insert query
+  const query = `
+    INSERT INTO log_entry (
+      beginning_qty,
+      qty_received,
+      qty_used,
+      ending_qty,
+      project_id,
+      pm_id,
+      log_date
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING *;
+  `;
+
+  const values = [
+    parseInt(beginning_qty, 10),
+    parseInt(qty_received, 10),
+    parseInt(qty_used, 10),
+    parseInt(ending_qty, 10),
+    project_id,
+    pm_id,
+    log_date,
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0]; // Return the newly created log entry
+  } catch (error) {
+    console.error
+  }
+}
