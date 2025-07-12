@@ -78,3 +78,39 @@ export async function getInventoryLogsByPM(pmid: string) {
     );
     return result.rows;
 }
+
+export async function getMatNamefromMaterials(materialid: string) {
+  try {
+    const result = await pool.query(
+      `SELECT name FROM materials WHERE material_id = $1`,
+      [materialid]
+    );
+
+    if (result.rows.length === 0) {
+      return null; // Material not found
+    }
+
+    return result.rows[0].name;
+  } catch (error) {
+    console.error('Error fetching material name:', error);
+    throw error;
+  }
+}
+
+export async function getLogEntriesByLogId(log_id: string) {
+  try {
+    const result = await pool.query(
+      `SELECT * FROM log_entry WHERE log_id = $1`,
+      [log_id]
+    );
+
+    if (result.rows.length === 0) {
+      return [];
+    }
+
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching log entries:', error);
+    throw error;
+  }
+}
