@@ -66,3 +66,15 @@ export const getAllLogs = async () => {
 
     return result.rows;
 };
+
+export async function getInventoryLogsByPM(pmid: string) {
+    const result = await pool.query(
+        `SELECT l.log_id AS id, l.log_date
+         FROM inventory_logs l
+         JOIN projects p ON l.projectid = p.projectid
+         WHERE p.pmid = $1
+         ORDER BY l.log_date DESC`,
+        [pmid]
+    );
+    return result.rows;
+}
