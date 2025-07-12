@@ -53,3 +53,14 @@ export function logsColumns(){
 
     return logColumns;
 }
+
+export function requestsColumns(){
+    const requestColumns = [
+        {header: 'Request ID', accessor: 'request_id'},
+        {header: 'Project', accessor: 'project_info'},
+        {header: 'Date Requested', accessor: 'request_date'},
+        {header: 'Status', accessor: 'status'},
+    ];
+
+    return requestColumns;
+}

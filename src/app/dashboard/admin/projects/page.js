@@ -90,9 +90,7 @@ function CreateProjModal({ onClose }) {
         pmid: '',
     });
 
-
     const [managers, setManagers] = useState([]);
-
     useEffect(() => {
         const fetchManagers = async () => {
             try {
