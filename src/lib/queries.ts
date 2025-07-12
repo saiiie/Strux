@@ -67,50 +67,54 @@ export const getAllLogs = async () => {
     return result.rows;
 };
 
+export const getAllRequests = async () => {
+  const result = await pool.query(`
+    SELECT 
+      mr.request_id,
+      mr.request_date,
+      mr.status,
+      CONCAT(p.projectname, ': ', p.location) AS project_info,
+      CONCAT(pm.fname, ' ', pm.lname) AS pm_name,
+      pm.pmid
+    FROM material_requests mr
+    JOIN projects p ON mr.projectid = p.projectid
+    JOIN project_managers pm ON p.pmid = pm.pmid
+    ORDER BY mr.request_date DESC;
+  `);
+
+  return result.rows;
+};
+
+// PROJECT MANAGERS QUERIES ------------------------------
 export async function getInventoryLogsByPM(pmid: string) {
     const result = await pool.query(
         `SELECT l.log_id AS id, l.log_date
-         FROM inventory_logs l
-         JOIN projects p ON l.projectid = p.projectid
-         WHERE p.pmid = $1
-         ORDER BY l.log_date DESC`,
+          FROM inventory_logs l
+          JOIN projects p ON l.projectid = p.projectid
+          WHERE p.pmid = $1
+          ORDER BY l.log_date DESC`,
         [pmid]
     );
     return result.rows;
 }
 
-export async function getMatNamefromMaterials(materialid: string) {
-  try {
-    const result = await pool.query(
-      `SELECT name FROM materials WHERE material_id = $1`,
-      [materialid]
-    );
+export const getMatNamefromMaterials = async (materialid: string) => {
+  const result = await pool.query(`
+    SELECT name 
+    FROM materials 
+    WHERE material_id = $1
+  `, [materialid]);
 
-    if (result.rows.length === 0) {
-      return null; // Material not found
-    }
+  return result.rows[0]?.name || null;
+};
 
-    return result.rows[0].name;
-  } catch (error) {
-    console.error('Error fetching material name:', error);
-    throw error;
-  }
-}
 
-export async function getLogEntriesByLogId(log_id: string) {
-  try {
-    const result = await pool.query(
-      `SELECT * FROM log_entry WHERE log_id = $1`,
-      [log_id]
-    );
+export const getLogEntriesByLogId = async (log_id: string) => {
+  const result = await pool.query(`
+    SELECT * 
+    FROM log_entry 
+    WHERE log_id = $1
+  `, [log_id]);
 
-    if (result.rows.length === 0) {
-      return [];
-    }
-
-    return result.rows;
-  } catch (error) {
-    console.error('Error fetching log entries:', error);
-    throw error;
-  }
-}
+  return result.rows;
+};
