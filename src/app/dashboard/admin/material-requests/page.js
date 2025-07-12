@@ -1,30 +1,31 @@
 'use client'
 
 import { Sidebar, Card, CreateButton, SubmitButton, InputField } from '@/app/components/components';
-import { adminTabs, projectsColumns } from '@/app/data/data';
+import { adminTabs, requestsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
 import { CirclePlus } from 'lucide-react';
 
 export default function DashboardPage() {
-    const columns = projectsColumns();
+    const columns = requestsColumns();
     const [errorMessage, setErrorMessage] = useState('');
-    const [projects, setProjects] = useState([]);
+    const [requests, setRequests] = useState([]);
+
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [viewProject, setViewProject] = useState(null);
     const [createProj, setCreateProj] = useState(false);
 
     useEffect(() => {
-        const fetchProjects = async () => {
+        const fetchRequests = async () => {
             try {
-                const response = await fetch('/api/projects');
+                const response = await fetch('/api/requests');
                 const data = await response.json();
-                setProjects(data);
+                setRequests(data);
             } catch (error) {
                 setErrorMessage(error);
                 setTimeout(() => setErrorMessage(''), 3000);
             }
         }
-        fetchProjects();
+        fetchRequests();
     }, []);
 
     return (
@@ -32,12 +33,12 @@ export default function DashboardPage() {
             <div className='flex h-screen w-screen m-0 p-0'>
                 <Sidebar tabs={adminTabs()} />
                 <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
-                    <Card columns={columns} data={projects}
-                        onRowClick={(projects) => {
-                            setViewProject(projects);
+                    <Card columns={columns} data={requests}
+                        onRowClick={(requests) => {
+                            setViewProject(requests);
                             setShowDetailsModal(true);
                         }} />
-                    <CreateButton text='Create Project' svg={<CirclePlus size={16} color="#FBFBFB" />} onClick={() => setCreateProj(true)} />
+                    {/* <CreateButton text='Create Project' svg={<CirclePlus size={16} color="#FBFBFB" />} onClick={() => setCreateProj(true)} /> */}
                 </div>
             </div>
 
@@ -46,3 +47,4 @@ export default function DashboardPage() {
         </>
     );
 }
+

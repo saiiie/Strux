@@ -162,7 +162,7 @@ function Cell({ data }) {
 
 function Status({ status, style = '' }) {
   let color;
-  status == 'Ongoing' ? color = '#e7f3fc'
+  status == 'Ongoing' || status == 'Pending' ? color = '#e7f3fc'
     : status == 'Completed' ? color = '#eefee2'
       : color = '#fae3e3';
 
