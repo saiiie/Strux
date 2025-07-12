@@ -79,14 +79,54 @@ export const getAllLogs = async () => {
     return result.rows;
 };
 
+export const getAllRequests = async () => {
+  const result = await pool.query(`
+    SELECT 
+      mr.request_id,
+      mr.request_date,
+      mr.status,
+      CONCAT(p.projectname, ': ', p.location) AS project_info,
+      CONCAT(pm.fname, ' ', pm.lname) AS pm_name,
+      pm.pmid
+    FROM material_requests mr
+    JOIN projects p ON mr.projectid = p.projectid
+    JOIN project_managers pm ON p.pmid = pm.pmid
+    ORDER BY mr.request_date DESC;
+  `);
+
+  return result.rows;
+};
+
+// PROJECT MANAGERS QUERIES ------------------------------
 export async function getInventoryLogsByPM(pmid: string) {
     const result = await pool.query(
         `SELECT l.log_id AS id, l.log_date
-         FROM inventory_logs l
-         JOIN projects p ON l.projectid = p.projectid
-         WHERE p.pmid = $1
-         ORDER BY l.log_date DESC`,
+          FROM inventory_logs l
+          JOIN projects p ON l.projectid = p.projectid
+          WHERE p.pmid = $1
+          ORDER BY l.log_date DESC`,
         [pmid]
     );
     return result.rows;
 }
+
+export const getMatNamefromMaterials = async (materialid: string) => {
+  const result = await pool.query(`
+    SELECT name 
+    FROM materials 
+    WHERE material_id = $1
+  `, [materialid]);
+
+  return result.rows[0]?.name || null;
+};
+
+
+export const getLogEntriesByLogId = async (log_id: string) => {
+  const result = await pool.query(`
+    SELECT * 
+    FROM log_entry 
+    WHERE log_id = $1
+  `, [log_id]);
+
+  return result.rows;
+};
