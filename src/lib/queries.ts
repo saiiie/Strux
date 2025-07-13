@@ -110,6 +110,23 @@ export async function getInventoryLogsByPM(pmid: string) {
     return result.rows;
 }
 
+export async function getMaterialRequestsByPM(pmid: string) {
+  const query = `
+    SELECT 
+      mr.request_id,
+      mr.request_date,
+      mr.status
+    FROM material_requests mr
+    JOIN projects p ON mr.projectid = p.projectid
+    WHERE p.pmid = $1
+    ORDER BY mr.request_date DESC;
+  `;
+
+  const result = await pool.query(query, [pmid]);
+
+  return result.rows;
+}
+
 export const getMatNamefromMaterials = async (materialid: string) => {
   const result = await pool.query(`
     SELECT name 
