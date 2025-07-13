@@ -2,244 +2,112 @@
 
 import { Sidebar, Card, CreateButton } from '@/app/components/components';
 import { pmTabs } from '@/app/data/data';
-import { useEffect, useState, useCallback, memo } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { CirclePlus } from 'lucide-react';
-import addLogEntry from '@/lib/inventory/log_entry/add';
-import addInventoryLog from '@/lib/inventory/add';
 
-// 🔁 Memoized Row Component — Only re-renders when its own data changes
-const MaterialRow = memo(({ material, index, onChange }) => {
-  return (
-    <div key={material.id} className="flex px-4 py-3 text-sm">
-      <input
-        type="text"
-        value={material.material}
-        onChange={(e) => onChange(index, 'material', e.target.value)}
-        className="w-1/5 bg-transparent outline-none"
-      />
-      <input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        value={material.beginningQty}
-        onChange={(e) =>
-          onChange(index, 'beginningQty', e.target.value)
-        }
-        className="w-1/5 bg-transparent outline-none text-center"
-      />
-      <input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        value={material.qtyReceived}
-        onChange={(e) =>
-          onChange(index, 'qtyReceived', e.target.value)
-        }
-        className="w-1/5 bg-transparent outline-none text-center"
-      />
-      <input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        value={material.qtyUsed}
-        onChange={(e) =>
-          onChange(index, 'qtyUsed', e.target.value)
-        }
-        className="w-1/5 bg-transparent outline-none text-center"
-      />
-      <input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        value={material.endingQty}
-        onChange={(e) =>
-          onChange(index, 'endingQty', e.target.value)
-        }
-        className="w-1/5 bg-transparent outline-none text-center"
-      />
-    </div>
-  );
-});
-
-export default function ProjectManagerPage() {
-  const [projects, setProjects] = useState([]);
-  const [logs, setLogs] = useState([]);
+export default function MaterialRequestsPage() {
+  const [materialRequests, setMaterialRequests] = useState([]);
+  const [projectName, setProjectName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalFormData, setModalFormData] = useState([
-    {
-      id: crypto.randomUUID(),
-      material: '',
-      beginningQty: 0,
-      qtyReceived: 0,
-      qtyUsed: 0,
-      endingQty: 0,
-    },
+  const [formData, setFormData] = useState([
+    { material: '', requestedQty: 0 },
   ]);
+  const [error, setError] = useState('');
 
   const params = useParams();
   const pmid = params.id;
 
   const columns = [
-    { header: 'ID', accessor: 'id', className: 'text-left pl-6' },
-    { header: 'Log Date', accessor: 'log_date', className: 'text-right pr-6' },
+    { header: 'ID', accessor: 'request_id', className: 'text-left pl-6' },
+    { header: 'Date Requested', accessor: 'request_date', className: 'text-right pr-6' },
+    { header: 'Status', accessor: 'status', className: 'text-right pr-6' },
   ];
 
-  // Load project and logs on mount
   useEffect(() => {
-    const loadProjects = async () => {
+    const fetchMaterialRequests = async () => {
       try {
-        const res = await fetch(`/api/projects/${pmid}`);
+        const res = await fetch(`/api/material-requests/${pmid}`);
         const data = await res.json();
-        setProjects(Array.isArray(data) ? data : []);
-      } catch {
-        console.error('Failed to load projects.');
+        setMaterialRequests(data);
+        if (Array.isArray(data) && data.length > 0 && data[0]?.projectname) {
+          setProjectName(data[0].projectname);
+        }
+      } catch (error) {
+        console.error(error);
       }
     };
 
-    const loadLogs = async () => {
-      try {
-        const res = await fetch(`/api/inventory_logs/pm/${pmid}`);
-        const data = await res.json();
-        setLogs(Array.isArray(data) ? data : []);
-      } catch {
-        console.error('Failed to load logs.');
-      }
-    };
-
-    if (pmid) {
-      loadProjects();
-      loadLogs();
-    }
+    fetchMaterialRequests();
   }, [pmid]);
 
-  // Reset form when modal opens
-  useEffect(() => {
-    if (isModalOpen) {
-      setModalFormData([
-        {
-          id: crypto.randomUUID(),
-          material: '',
-          beginningQty: 0,
-          qtyReceived: 0,
-          qtyUsed: 0,
-          endingQty: 0,
-        },
-      ]);
-    }
-  }, [isModalOpen]);
-
-  const project = projects[0];
-
   const addNewRow = () => {
-    setModalFormData(prev => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        material: '',
-        beginningQty: 0,
-        qtyReceived: 0,
-        qtyUsed: 0,
-        endingQty: 0,
-      },
-    ]);
+    setFormData([...formData, { material: '', requestedQty: 0 }]);
   };
 
-  const handleMaterialChange = (index, field, value) => {
-    const updated = [...modalFormData];
-
-    if (
-      ['beginningQty', 'qtyReceived', 'qtyUsed', 'endingQty'].includes(field)
-    ) {
-      const parsed = parseInt(value);
-      updated[index][field] = isNaN(parsed) || parsed < 0 ? 0 : parsed;
+  const handleChange = (index, field, value) => {
+    const updated = [...formData];
+    if (field === 'requestedQty') {
+      updated[index][field] = Math.max(0, parseInt(value, 10) || 0);
     } else {
       updated[index][field] = value;
     }
+    setFormData(updated);
 
-    setModalFormData(updated);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const inventoryLogPayload = {
-        log_date: new Date().toISOString().replace('T', ' ').replace('.000Z', '+00'),
-        project_id: project?.projectid || null,
-        project: project,
-      };
-
-      const logEntryPayload = modalFormData.map(material => ({
-        material: material.material,
-        beginning_qty: parseInt(material.beginningQty, 10) || 0,
-        qty_received: parseInt(material.qtyReceived, 10) || 0,
-        qty_used: parseInt(material.qtyUsed, 10) || 0,
-        ending_qty: parseInt(material.endingQty, 10) || 0,
-        project_id: project?.projectid || null,
-        pm_id: pmid || null,
-        log_date: new Date().toISOString(),
-      }));
-
-// ✅ Attach array of entries to the parent object
-      inventoryLogPayload.log_entries = logEntryPayload;
-      await addLogEntry(logEntryPayload);
-
-      await addInventoryLog(inventoryLogPayload)
-
-     
-
-      alert('Log submitted successfully!');
-      setIsModalOpen(false);
-
-    } catch (err) {
-      alert(`Error: ${err.message}`);
+    if (field === 'requestedQty' && updated[index].material.toLowerCase() === 'gravel' && updated[index][field] < 50) {
+      setError('Minimum quantity of 50 for Gravel required!');
+    } else {
+      setError('');
     }
   };
 
-  const CreateNewLogEntry = () => {
-    return (
-      isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(0,0,0,0.3)]">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault(); // prevent page reload
-              handleSubmit();     // your existing submit logic
-            }}
-            className="bg-white w-[750px] h-[420px] rounded-lg shadow-lg relative flex flex-col p-6 text-black"
-          >
-            {/* Close Button */}
-            <div className="flex justify-end mb-4">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-600 text-lg font-bold hover:text-black"
-              >
-                ✕
-              </button>
+  const handleSubmit = () => {
+    console.log('Submitting request:', formData);
+    setIsModalOpen(false);
+  };
+
+  const CreateNewRequestModal = () => (
+    isModalOpen && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(0,0,0,0.3)]">
+        <div className="bg-white w-[750px] h-[420px] rounded-lg shadow-lg relative flex flex-col p-6 text-black">
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="text-gray-600 text-lg font-bold hover:text-black"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="border border-gray-300 rounded-md flex-1 overflow-y-auto mb-5">
+            <div className="flex bg-[#0A2C46] text-white font-semibold text-sm py-3 px-4 rounded-t">
+              <div className="w-1/2 text-left">Material</div>
+              <div className="w-1/2 text-right">Requested Quantity</div>
             </div>
 
-            {/* Table Header */}
-            <div className="border border-gray-300 rounded-md flex-1 overflow-y-auto mb-5">
-              <div className="flex bg-[#0A2C46] text-white font-semibold text-sm py-3 px-4 rounded-t">
-                <div className="w-1/5">Material</div>
-                <div className="w-1/5">Beginning Qty</div>
-                <div className="w-1/5">Qty Received</div>
-                <div className="w-1/5">Qty Used</div>
-                <div className="w-1/5">Ending Qty</div>
-              </div>
-
-              {/* Table Rows */}
-              {modalFormData.map((material, index) => (
-                <MaterialRow
-                  key={material.id}
-                  material={material}
-                  index={index}
-                  onChange={handleMaterialChange}
+            {formData.map((item, index) => (
+              <div key={index} className="flex px-4 py-3 text-sm">
+                <input
+                  type="text"
+                  value={item.material}
+                  onChange={(e) => handleChange(index, 'material', e.target.value)}
+                  className="w-1/2 bg-transparent outline-none"
                 />
-              ))}
-            </div>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={item.requestedQty}
+                  onChange={(e) => handleChange(index, 'requestedQty', e.target.value)}
+                  className="w-1/2 bg-transparent outline-none text-right"
+                />
+              </div>
+            ))}
+          </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end gap-x-3">
+          <div className="flex flex-col items-end gap-y-2">
+            {error && <span className="text-sm text-red-500 self-start pl-1">{error}</span>}
+            <div className="flex gap-x-3">
               <button
                 type="button"
                 onClick={addNewRow}
@@ -249,16 +117,17 @@ export default function ProjectManagerPage() {
               </button>
               <button
                 type="submit"
+                onClick={handleSubmit}
                 className="flex items-center gap-x-2 px-4 py-2 bg-[#0A2C46] text-white rounded-md hover:bg-[#083047] text-sm"
               >
-                ➕ Create New Log
+                ➕ Submit Request
               </button>
             </div>
-          </form>
+          </div>
         </div>
-      )
-    );
-  };
+      </div>
+    )
+  );
 
   return (
     <div className="flex h-screen w-screen">
@@ -266,25 +135,18 @@ export default function ProjectManagerPage() {
 
       <div className="flex flex-col p-6 w-full gap-y-6 items-center">
         <h2 className="text-2xl font-semibold self-start">
-          {project ? (
-            <>
-              {project.projectname}{' '}
-              <span className="text-gray-500 text-base">P-{project.projectid}</span>
-            </>
-          ) : (
-            'Loading project...'
-          )}
+          {projectName || 'Loading project...'}
         </h2>
 
-        <Card columns={columns} data={logs} onRowClick={() => {}} />
+        <Card columns={columns} data={materialRequests} onRowClick={() => {}} />
 
         <CreateButton
-          text="Enter New Log"
+          text="Create New Request"
           svg={<CirclePlus size={16} color="#FBFBFB" />}
           onClick={() => setIsModalOpen(true)}
         />
 
-        <CreateNewLogEntry />
+        <CreateNewRequestModal />
       </div>
     </div>
   );

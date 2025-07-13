@@ -115,7 +115,8 @@ export async function getMaterialRequestsByPM(pmid: string) {
     SELECT 
       mr.request_id,
       mr.request_date,
-      mr.status
+      mr.status,
+      p.projectname
     FROM material_requests mr
     JOIN projects p ON mr.projectid = p.projectid
     WHERE p.pmid = $1
