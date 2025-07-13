@@ -102,13 +102,21 @@ const ShowAccount = ({ account, onClose }) => {
                                 id="is_active"
                                 value={String(isActive)}
                                 onChange={handleChange}
+                                disabled={!!projectname}    
                                 className="px-2 py-2 border border-gray-300 rounded text-sm"
                             >
                                 <option disabled value="">Select Project Manager</option>
                                 <option value="true">Active</option>
                                 <option value="false">Deactivated</option>
                             </select>
-                            <SubmitButton text="Create Project" />
+
+                            {projectname && (
+                                <p className="text-xs text-red-500">
+                                    You can't deactivate this account because they are assigned to a project.
+                                </p>
+                            )}
+
+                            <SubmitButton text="Submit Changes" disabled={!!projectname} />
                         </form>
                     </div>
                 </div>
