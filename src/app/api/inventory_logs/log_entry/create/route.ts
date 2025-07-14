@@ -7,13 +7,6 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
-    if (!Array.isArray(data)) {
-      return NextResponse.json(
-        { error: 'Expected an array of log entries' },
-        { status: 400 }
-      );
-    }
-
     const successes = [];
     const failures = [];
 

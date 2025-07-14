@@ -6,18 +6,13 @@ import { pool } from '@/lib/db';
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-        // log_date: new Date().toISOString().split('T')[0],
-        // project_id: project?.projectid || null,
-        // project: project,
-        // log_entries:logEntryPayload
-    // Validate required fields
     if (!data.log_date ) {
       return NextResponse.json(
         { error: 'Missing required fields log_date' },
         { status: 400 }
       );
     }
-    if (!data.project_id) {
+    if (!data.projectid) {
       return NextResponse.json(
         { error: 'Missing required fields projectid' },
         { status: 400 }
@@ -45,8 +40,8 @@ export async function POST(request: NextRequest) {
     const query = `
       INSERT INTO inventory_logs (
         log_date,
-        project_id,
-        project
+        projectid,
+        project,
         log_entries
       ) VALUES ($1, $2, $3, $4)
       RETURNING *;
@@ -55,8 +50,8 @@ export async function POST(request: NextRequest) {
     const values = [
       logDate.toISOString(),
       data.projectid,
-      data.project,
-      JSON.stringify(data.log_entries),
+      JSON.stringify(data.project),
+      JSON.stringify(data.log_entries)
     ];
     console.log("values: ",values)
 

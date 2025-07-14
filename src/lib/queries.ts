@@ -17,6 +17,7 @@ export const getAllProjects = async () => {
             p.startdate,
             p.enddate,
             p.client,
+            p.pmid,
             CONCAT(pm.fname, ' ', pm.lname) AS project_manager_name
         FROM projects p
         JOIN project_managers pm ON p.pmid = pm.pmid;
@@ -61,6 +62,53 @@ export const changeAccountStatus = async ({newStatus, username}) => {
         `, [newStatus, username]);
         return result.rowCount;
 }
+
+export const changeProjectDetails = async ({ project }) => {
+  const {
+    projectid,
+    projectname,
+    location,
+    startdate,
+    enddate,
+    pmid,
+    status,
+    client,
+  } = project;
+
+  const query = `
+    UPDATE projects
+    SET
+      projectname = $1,
+      location = $2,
+      startdate = $3,
+      enddate = $4,
+      pmid = $5,
+      status = $6,
+      client = $7
+    WHERE projectid = $8
+    RETURNING *;
+  `;
+
+  const values = [
+    projectname,
+    location,
+    startdate,
+    enddate,
+    pmid,
+    status,
+    client,
+    projectid,
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error updating project:', error);
+    throw error;
+  }
+};
+
 
 export const getAllLogs = async () => {
     const result = await pool.query(`

@@ -66,7 +66,7 @@ export default function ProjectManagerPage() {
   const [projects, setProjects] = useState([]);
   const [logs, setLogs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalFormData, setModalFormData] = useState([
+  const [x, setModalFormData] = useState([
     {
       id: crypto.randomUUID(),
       material: '',
@@ -162,11 +162,8 @@ export default function ProjectManagerPage() {
 
   const handleSubmit = async () => {
     try {
-      const inventoryLogPayload = {
-        log_date: new Date().toISOString().replace('T', ' ').replace('.000Z', '+00'),
-        project_id: project?.projectid || null,
-        project: project,
-      };
+      const now = new Date();
+      const formattedDate = now.toISOString().replace('T', ' ').replace('.000Z', '+00');
 
       const logEntryPayload = modalFormData.map(material => ({
         material: material.material,
@@ -176,24 +173,33 @@ export default function ProjectManagerPage() {
         ending_qty: parseInt(material.endingQty, 10) || 0,
         project_id: project?.projectid || null,
         pm_id: pmid || null,
-        log_date: new Date().toISOString(),
+        log_date: formattedDate,
       }));
 
-// ✅ Attach array of entries to the parent object
-      inventoryLogPayload.log_entries = logEntryPayload;
-      await addLogEntry(logEntryPayload);
+      const inventoryLogPayload = {
+        log_date: formattedDate,
+        projectid: project?.projectid || null,
+        project: project,
+        log_entries: logEntryPayload,
+      };
 
-      await addInventoryLog(inventoryLogPayload)
+      try {
+        await addLogEntry([...logEntryPayload]);  
+        await addInventoryLog(inventoryLogPayload);
 
-     
+        alert('Log submitted successfully!');
+        setIsModalOpen(false);
+      } catch (err) {
+        alert(`ERROR: ${err.message}`);
+        console.error("FULL ERROR:", err);
+      }
 
-      alert('Log submitted successfully!');
-      setIsModalOpen(false);
 
     } catch (err) {
       alert(`Error: ${err.message}`);
     }
   };
+
 
   const CreateNewLogEntry = () => {
     return (
@@ -276,7 +282,7 @@ export default function ProjectManagerPage() {
           )}
         </h2>
 
-        <Card columns={columns} data={logs} onRowClick={() => {}} />
+        <Card columns={columns} data={logs} onRowClick={() => { }} />
 
         <CreateButton
           text="Enter New Log"
