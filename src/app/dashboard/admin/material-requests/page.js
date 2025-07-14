@@ -3,7 +3,6 @@
 import { Sidebar, Card, CreateButton, SubmitButton, InputField } from '@/app/components/components';
 import { adminTabs, requestsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
-import { CirclePlus } from 'lucide-react';
 
 export default function DashboardPage() {
     const columns = requestsColumns();
@@ -38,7 +37,6 @@ export default function DashboardPage() {
                             setViewProject(requests);
                             setShowDetailsModal(true);
                         }} />
-                    {/* <CreateButton text='Create Project' svg={<CirclePlus size={16} color="#FBFBFB" />} onClick={() => setCreateProj(true)} /> */}
                 </div>
             </div>
 

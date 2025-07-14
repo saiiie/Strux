@@ -92,13 +92,11 @@ export function Card({ columns, data, onRowClick }) {
 }
 
 function SearchBar({ input, setInput }) {
-
-
   return (
     <div className="flex justify-between m-0 p-[.5em]">
       <div className="flex p-0 m-0 h-[100%] w-[50%] rounded-sm bg-[#F9F9F9] border border-[rgba(202,202,202,0.5)]">
         <div className="flex items-center justify-center h-full p-0 pl-[.8em] m-0 w-fit">
-          <Search className="h-5 w-5 text-[#0C2D49]" />
+          <Search className="h-4 w-4 text-[#0C2D49]" />
         </div>
         <input
           className="w-full h-full m-0 p-[.5em] text-base bg-none border-none outline-0"
@@ -179,7 +177,7 @@ function Cell({ data }) {
   }
 
   return (
-    <div className="flex items-center justify-center m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-[rgba(0,0,0,0.8)] group-hover:bg-[#FAFDFF] transition-colors">
+    <div className="flex items-center justify-center text-center m-0 p-[12px] pt-[16px] pb-[16px] text-[14px] text-[rgba(0,0,0,0.8)] group-hover:bg-[#FAFDFF] transition-colors">
       {display}
     </div>
   );
@@ -192,7 +190,7 @@ function Status({ status }) {
 
   if (status === true || status === 'Active') {
     label = 'Active';
-    color = '#e7f3fc'; 
+    color = '#eefee2'; 
   } else if (status === false || status === 'Deactivated') {
     label = 'Deactivated';
     color = '#fae3e3';
@@ -210,7 +208,7 @@ function Status({ status }) {
   return (
     <div className="flex justify-center items-center m-0 p-[12px] pt-[16px] pb-[16px] group-hover:bg-[#FAFDFF] transition-colors">
       <div
-        className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm"
+        className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm max-w-[150px]"
         style={{ backgroundColor: color }}
       >
         {label}
