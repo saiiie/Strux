@@ -35,10 +35,10 @@ export default function LogInPage() {
       if (!data.success) {
         setErrorMessage('Invalid user or password.');
         setTimeout(() => setErrorMessage(''), 3000);
-      } else if (data.role === 'admin') {
+      } else if (data.role === 'Admin') {
         router.push('/dashboard/admin/projects');
-      } else if (data.role === 'pm') {
-        router.push(`/dashboard/pm/${data.userID}`);
+      } else if (data.role === 'Project Manager') {
+        router.push(`/dashboard/pm/${data.userID}/inventory-logs`);
       }
     } catch (error) {
       setErrorMessage('Something went wrong. Please try again.');
