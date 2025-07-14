@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         const { account_id, role } = result.rows[0];
 
         let userID = null;
-        if (role === 'pm') {
+        if (role === 'Project Manager') {
             const pmResult = await pool.query(
                 'SELECT pmid FROM project_managers WHERE account_id = $1', [account_id]
             );
