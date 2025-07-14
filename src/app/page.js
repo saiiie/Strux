@@ -40,7 +40,7 @@ export default function LogInPage() {
       } else if (data.role === 'Admin') {
         router.push('/dashboard/admin/projects');
       } else if (data.role === 'Project Manager') {
-        router.push(`/dashboard/pm/${data.userID}`);
+        router.push(`/dashboard/pm/${data.userID}/inventory-logs`);
       }
     } catch (error) {
       setErrorMessage('Something went wrong. Please try again.');

@@ -1,4 +1,3 @@
-// /app/api/projects/[pmid]/route.ts
 import { NextResponse } from 'next/server';
 import { getProjectByPM } from '@/lib/queries';
 

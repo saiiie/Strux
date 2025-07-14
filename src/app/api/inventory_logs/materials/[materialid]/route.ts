@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getMatNamefromMaterials } from '@/lib/queries';
 
-export async function GET(request: Request, context: { params: { materialid: string } }) {
-  const { materialid } = context.params;
+export async function GET(
+  request: Request,
+  { params }: { params: { materialid: string } }
+) {
+  const { materialid } = await params;
 
   try {
     if (!materialid || isNaN(Number(materialid))) {
