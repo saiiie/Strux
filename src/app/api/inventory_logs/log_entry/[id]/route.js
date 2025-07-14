@@ -1,7 +1,7 @@
 import { getLogEntriesByLogId } from '@/lib/queries';
 
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const logEntries = await getLogEntriesByLogId(id);

@@ -85,19 +85,19 @@ const ShowAccount = ({ account, onClose }) => {
 
     return (
         <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-            <div className="z-[101] bg-white w-[45%] h-[40%] p-10 pt-8 rounded shadow-lg flex flex-col items-end">
+            <div className="z-[101] bg-white w-[45%] h-[50%] p-10 pt-8 rounded shadow-lg flex flex-col items-end">
                 <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
                 <div className="w-full h-full mt-2">
                     <div className="flex justify-between items-center gap-x-[10px] h-fit w-full m-0 mb-5 p-0 border-b border-[rgba(0,0,0,0.6)]">
-                        <h1 className="text-[22px] font-medium p-0 pb-[5px] m-0">Name: {name}</h1>
+                        <p className="text-[22px] font-normal p-0 pb-[5px] m-0"><span className="font-medium">Name:</span> {name}</p>
                     </div>
                     <div className="flex flex-col gap-y-[16px]">
-                        <p className="font-light text-[17px]"><span className="font-medium">Project Assigned:</span> {projectname || 'N/A'}</p>
-                        <p className="font-light text-[17px]"><span className="font-medium">Username:</span> {username}</p>
-                        <p className="font-light text-[17px]"><span className="font-medium">Password:</span> {password}</p>
+                        <p className="font-light text-base"><span className="font-medium">Project Assigned:</span> {projectname || 'N/A'}</p>
+                        <p className="font-light text-base"><span className="font-medium">Username:</span> {username}</p>
+                        <p className="font-light text-base"><span className="font-medium">Password:</span> {password}</p>
 
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-y-[10px] mt-4">
-                            <label htmlFor="is_active" className="text-sm font-medium">Account Status</label>
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-y-[10px] mt-0">
+                            <label htmlFor="is_active" className="text-base font-medium top-0">Account Status:</label>
                             <select
                                 id="is_active"
                                 value={String(isActive)}
@@ -111,7 +111,7 @@ const ShowAccount = ({ account, onClose }) => {
                             </select>
 
                             {projectname && (
-                                <p className="text-xs text-red-500">
+                                <p className="text-xs text-red-500 mb-4 mt-1">
                                     You can't deactivate this account because they are assigned to a project.
                                 </p>
                             )}

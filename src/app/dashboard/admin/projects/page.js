@@ -183,23 +183,6 @@ function CreateProjModal({ onClose }) {
                         onChange={handleChange}
                     />
 
-                    {/* <label htmlFor="status" className="text-sm text-[#0C2D49] font-medium">
-                        Project Status
-                    </label>
-                    <select
-                        id="status"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        className={`px-2 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
-                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all ${formData.pmid === '' ? 'text-gray-400' : 'text-black'
-                            }`}>
-                        <option disabled value="">Select Status</option>
-                        <option value='Ongoing'>Ongoing</option>
-                        <option value='Completed'>Completed</option>
-                        <option value='Cancelled'>Cancelled</option>
-                    </select> */}
-
                     <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium m-0">
                         Project Manager
                     </label>
