@@ -17,7 +17,7 @@ export default function ProjectManagerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [createLog, setCreateLog] = useState(false);
   const params = useParams();
-  const pmid = params.id;
+  const pmid = parseInt(params.id);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -53,7 +53,7 @@ export default function ProjectManagerPage() {
 
   return (
     <div className="flex h-screen w-screen m-0 p-0">
-      <Sidebar tabs={pmTabs()} />
+      <Sidebar tabs={pmTabs( pmid )} />
       <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
         <h2 className="text-2xl font-semibold mb-1 flex items-center gap-x-[10px] self-start">
           {project

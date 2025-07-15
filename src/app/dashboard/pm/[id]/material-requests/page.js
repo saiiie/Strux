@@ -166,7 +166,7 @@ export default function MaterialRequestsPage() {
     const [formData, setFormData] = useState([{ material: '', requestedQty: 0 }]);
 
     const params = useParams();
-    const pmid = params.id;
+    const pmid = parseInt(params.id);
 
     useEffect(() => {
         const fetchMaterialRequests = async () => {
@@ -187,7 +187,7 @@ export default function MaterialRequestsPage() {
 
     return (
         <div className="flex h-screen w-screen">
-            <Sidebar tabs={pmTabs()} />
+            <Sidebar tabs={pmTabs( pmid )} />
 
             <div className="flex flex-col p-6 w-full gap-y-6 items-center">
                 <h2 className="text-2xl font-semibold self-start">

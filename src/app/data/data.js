@@ -1,4 +1,4 @@
-import { Folder, File, Clipboard, User, LogOut } from 'lucide-react';
+import { Folder, File, Clipboard, User, LogOut, Settings } from 'lucide-react';
 
 export function adminTabs() {
     const adminTabs = [
@@ -12,10 +12,11 @@ export function adminTabs() {
     return adminTabs;
 }
 
-export function pmTabs() {
+export function pmTabs( pmid ) {
     const pmTabs = [
-        { label: "Inventory Logs", svg: <File size={28} color="#FBFBFB" />, href: "/dashboard/pm" },
-        { label: "Material Requests", svg: <Clipboard size={28} color="#FBFBFB" />, href: "/dashboard/admin" },
+        { label: "Inventory Logs", svg: <File size={28} color="#FBFBFB" />, href: `/dashboard/pm/${pmid}/inventory-logs` },
+        { label: "Material Requests", svg: <Clipboard size={28} color="#FBFBFB" />, href: `/dashboard/pm/${pmid}/material-requests` },
+        { label: "Settings", svg: <Settings size={28} color="#FBFBFB" />, href: `/dashboard/pm/${pmid}/settings` },
         { label: "Log Out", svg: <LogOut size={26} color="#FBFBFB" />, href: "/dashboard/admin" }
     ]
 

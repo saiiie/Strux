@@ -41,6 +41,7 @@ export const getAllAccounts = async () => {
             a.password,
             p.projectname,
             CONCAT(pm.fname, ' ', pm.lname) AS name,
+            pm.pmid,
             a.is_active
         FROM 
             accounts a
