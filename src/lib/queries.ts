@@ -238,3 +238,20 @@ export async function createLog(projectId: string, entries: any[]) {
     client.release();
   }
 }
+
+export async function getRequestEntriesByRequestId(request_id: number) {
+  const query = `
+    SELECT 
+      re.entry_id,
+      re.request_id,
+      m.name AS material_name,
+      re.qty_requested,
+      re.qty_received,
+      re.status
+    FROM request_entry re
+    JOIN materials m ON re.material_id = m.material_id
+    WHERE re.request_id = $1
+  `;
+  const result = await pool.query(query, [request_id]);
+  return result.rows;
+}

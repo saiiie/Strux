@@ -71,7 +71,7 @@ export default function ProjectManagerPage() {
           onClick={() => setCreateLog(true)}
         />
 
-        {createLog && project && <CreateLogModal onClose={() => setCreateLog(false)} projectId={project.projectid} />};
+        {createLog && project && <CreateLogModal onClose={() => setCreateLog(false)} projectId={project.projectid} />}
 
         {selectedLog && (
           <LogDetailsModal
@@ -120,7 +120,6 @@ function CreateLogModal({ onClose, projectId }) {
     ]);
   };
 
-  // PROJECT ID MIGHT BE IN UPPERCASE
   const handleSubmit = async () => {
     try {
       const response = await addLog(projectId, rows);
