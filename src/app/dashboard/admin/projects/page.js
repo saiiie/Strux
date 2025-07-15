@@ -115,7 +115,7 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
     const formatDateForInput = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD for input type="date"
+        return date.toISOString().split('T')[0];
     };
 
     return (
