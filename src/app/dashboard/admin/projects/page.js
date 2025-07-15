@@ -115,7 +115,7 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
     const formatDateForInput = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD for input type="date"
+        return date.toISOString().split('T')[0]; 
     };
 
     return (
@@ -173,6 +173,21 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
                         value={formatDateForInput(editableProject.enddate)}
                         onChange={handleChange}
                     />
+
+                    <label htmlFor="status" className="text-base font-medium top-0">Project Status:</label>
+                    <select
+                        id="status"
+                        value={editableProject.status || ''}
+                        onChange={handleChange}
+                        name='status'
+                        className="px-2 py-2 border border-gray-300 rounded text-sm"
+                    >
+                        <option disabled value="">Select Project Status</option>
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+
                     <SubmitButton text="Update Project" />
                 </form>
             </div>
@@ -285,6 +300,7 @@ function CreateProjModal({ onClose, onCreated }) {
                         onChange={handleChange}
                     />
 
+                    
                     <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium m-0">
                         Project Manager
                     </label>
