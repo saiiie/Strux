@@ -1,6 +1,10 @@
+import { NextRequest } from 'next/server';
 import { getLogEntriesByLogId } from '@/lib/queries';
 
-export async function GET(request, { params }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<Response> {
   const { id } = await params;
 
   try {

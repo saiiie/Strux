@@ -74,3 +74,25 @@ export function pmLogsColumns() {
 
     return pmLogColumns;
 }
+
+export function creatLogHeaders() {
+    const tableHeaders = [
+        "Material",
+        "Beginning Qty",
+        "Qty Received",
+        "Qty Used",
+        "Ending Qty"
+    ];
+
+    return tableHeaders;
+}
+
+export function requestsPMColumns() {
+    const columns = [
+        { header: 'ID', accessor: 'request_id', className: 'text-left pl-6' },
+        { header: 'Date Requested', accessor: 'request_date', className: 'text-right pr-6' },
+        { header: 'Status', accessor: 'status', className: 'text-right pr-6' },
+    ];
+
+    return columns;
+}
