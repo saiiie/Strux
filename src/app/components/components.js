@@ -169,11 +169,11 @@ function Cell({ data }) {
     display = 'N/A';
   }
 
-  else if (typeof data === 'string' && data.includes('T') && data.includes('.000Z')) {
-    const [datePart, timePart] = data.split('T');
-    const timeOnly = timePart.split('.')[0];
-    const [hour, minute] = timeOnly.split(':');
-    display = `${datePart} ${hour}:${minute}`;
+  else if (typeof data === 'string' && data.includes('T') && data.endsWith('Z')) {
+  const [datePart, timePart] = data.split('T');
+  const timeOnly = timePart.split('.')[0];
+  const [hour, minute] = timeOnly.split(':');
+  display = `${datePart} ${hour}:${minute}`;
   }
 
   return (

@@ -9,9 +9,6 @@ export default function DashboardPage() {
     const columns = logsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [logs, setLogs] = useState([]);
-    // const [showDetailsModal, setShowDetailsModal] = useState(false);
-    // const [viewProject, setViewProject] = useState(null);
-    const [createAcc, setCreateAcc] = useState(false);
 
     useEffect(() => {
         const fetchLogs = async () => {
