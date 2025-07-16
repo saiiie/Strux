@@ -1,21 +1,22 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getRequestEntriesByRequestId } from '@/lib/queries';
 
 export async function GET(
-    req: Request,
+    req: NextRequest,
     context: { params: { request_id: string } }
 ) {
-    const requestId = Number(context.params.request_id);
+    const { request_id } = context.params;
 
-    if (!requestId) {
-        return NextResponse.json({ error: 'Missing request_id' }, { status: 400 });
+    const requestIdNum = Number(request_id);
+    if (!requestIdNum) {
+        return NextResponse.json({ error: 'Missing or invalid request_id' }, { status: 400 });
     }
 
     try {
-        const entries = await getRequestEntriesByRequestId(requestId);
-        return NextResponse.json(entries, { status: 200 });
-    } catch (err) {
-        console.error('Error fetching request entries:', err);
+        const entries = await getRequestEntriesByRequestId(requestIdNum);
+        return NextResponse.json(entries);
+    } catch (error) {
+        console.error('Error fetching entries by request_id:', error);
         return NextResponse.json({ error: 'Failed to fetch entries' }, { status: 500 });
     }
 }

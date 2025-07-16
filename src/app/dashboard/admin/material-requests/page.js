@@ -84,7 +84,7 @@ function ViewRequestModal({ request, onClose }) {
                     <h3 className="text-xl font-semibold">Request Details</h3>
                     <button
                         onClick={onClose}
-                        className="text-gray-600 text-lg font-bold hover:text-black"
+                        className="text-[#0C2D49] text-lg font-bold cursor-pointer"
                     >
                         ✕
                     </button>
