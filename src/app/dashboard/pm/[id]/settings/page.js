@@ -1,20 +1,39 @@
 'use client'
 
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Sidebar } from '@/app/components/components';
-import { pmTabs } from '@/app/data/data'; 
+import { pmTabs } from '@/app/data/data';
+import { useRouter, useParams } from 'next/navigation';
 
-export default function SettingsPage() { 
+export default function SettingsPage() {
 
-    const params = useParams();
-    const pmid = parseInt(params.id); 
-
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [accountInfo, setAccountInfo] = useState({});
-    const [isLoading, setIsLoading] = useState(true); 
+    const [isLoading, setIsLoading] = useState(true);
+    
+    const router = useRouter();
+    const params = useParams();
+    const pmid = params.id;
 
     useEffect(() => {
+        const storedUser = localStorage.getItem('currentUser');
+        setCurrentUser(storedUser);
+    }, []);
+
+    useEffect(() => {
+        if (!currentUser || !pmid) return;
+
+        if (currentUser === 'admin' || pmid !== currentUser) {
+            router.push('/');
+        }
+    }, [currentUser, pmid]);
+
+
+    useEffect(() => {
+        if (!currentUser) return;
+
         const fetchAccounts = async () => {
             setIsLoading(true);
             try {
@@ -23,15 +42,15 @@ export default function SettingsPage() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                const accountFound = data.find(account => account.pmid === pmid);
-                
+                const accountFound = data.find(account => account.pmid.toString() === currentUser);
+
                 if (accountFound) {
                     setAccountInfo(accountFound);
                     console.log("Found Account Info:", accountFound);
                 } else {
-                    console.error(`Account with pmid ${pmid} not found.`);
-                    setAccountInfo({}); 
-                    setErrorMessage(`Account with ID ${pmid} not found. Please check the URL.`);
+                    console.error(`Account with pmid ${currentUser} not found.`);
+                    setAccountInfo({});
+                    setErrorMessage(`Account with ID ${currentUser} not found. Please check the URL.`);
                 }
 
             } catch (error) {
@@ -41,19 +60,15 @@ export default function SettingsPage() {
                 setIsLoading(false);
             }
         };
-        
-        if (pmid) {
-            fetchAccounts();
-        } else {
-            setIsLoading(false); 
-        }
 
-    }, [pmid]); 
+        fetchAccounts();
+    }, [currentUser]);
+
 
 
     return (
         <div className="flex h-screen w-screen bg-gray-100">
-            <Sidebar tabs={pmTabs(pmid)} />
+            <Sidebar tabs={pmTabs(currentUser)} />
 
             <div className="flex-1 p-8 overflow-auto">
                 <h1 className="text-3xl font-bold text-gray-800 mb-6">Account Settings</h1>

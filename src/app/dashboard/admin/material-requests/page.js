@@ -3,8 +3,35 @@
 import { Sidebar, Card, CreateButton, SubmitButton, InputField } from '@/app/components/components';
 import { adminTabs, requestsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+
+    const router = useRouter();
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('currentUser');
+        setCurrentUser(storedUser);
+        setLoading(false); 
+    }, []);
+
+    useEffect(() => {
+        if (!loading && currentUser !== 'admin') {
+            router.push('/');
+        }
+    }, [currentUser, loading]);
+
+    if (loading) {
+        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
+    }
+
+    if (currentUser !== 'admin') {
+        return null; 
+    }
+
+
     const columns = requestsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [requests, setRequests] = useState([]);
@@ -64,6 +91,7 @@ function ViewRequestModal({ request, onClose }) {
                 const res = await fetch(`/api/requests/entries/${requestId}`);
                 const data = await res.json();
                 setEntries(data);
+                console.log(data);
             } catch (error) {
                 console.error('Error fetching request entries:', error);
                 setEntries([]);

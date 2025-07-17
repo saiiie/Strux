@@ -3,15 +3,40 @@
 import { Sidebar, Card, CreateButton, SubmitButton, InputField } from '@/app/components/components';
 import { adminTabs, accountsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { CirclePlus } from 'lucide-react';
 import addAccount from "@/lib/accounts/add";
 
 export default function DashboardPage() {
+    const router = useRouter();
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('currentUser');
+        setCurrentUser(storedUser);
+        setLoading(false); 
+    }, []);
+
+    useEffect(() => {
+        if (!loading && currentUser !== 'admin') {
+            router.push('/');
+        }
+    }, [currentUser, loading]);
+
+    if (loading) {
+        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
+    }
+
+    if (currentUser !== 'admin') {
+        return null; 
+    }
+
     const columns = accountsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [viewAccount, setViewAccount] = useState(null);
+    const [viewAccount, setViewAccount] = useState({});
     const [createAcc, setCreateAcc] = useState(false);
 
     useEffect(() => {
@@ -43,8 +68,8 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {showDetailsModal && <ShowAccount account={viewAccount} onClose={() => setShowDetailsModal(false)} />};
-            {createAcc && <CreateAccModal onClose={() => setCreateAcc(false)} />};
+            {showDetailsModal && <ShowAccount account={viewAccount} onClose={() => setShowDetailsModal(false)} />}
+            {createAcc && <CreateAccModal onClose={() => setCreateAcc(false)} />}
         </>
     );
 }
@@ -52,6 +77,11 @@ export default function DashboardPage() {
 const ShowAccount = ({ account, onClose }) => {
     const { username, password, projectname, name } = account;
     const [isActive, setIsActive] = useState(account.is_active);
+
+    const decodePassword = (bufferObj) => {
+        if (!bufferObj || !bufferObj.data) return '';
+        return String.fromCharCode(...bufferObj.data);
+    };
 
     const handleChange = (e) => {
         setIsActive(e.target.value === 'true');
@@ -94,7 +124,9 @@ const ShowAccount = ({ account, onClose }) => {
                     <div className="flex flex-col gap-y-[16px]">
                         <p className="font-light text-base"><span className="font-medium">Project Assigned:</span> {projectname || 'N/A'}</p>
                         <p className="font-light text-base"><span className="font-medium">Username:</span> {username}</p>
-                        <p className="font-light text-base"><span className="font-medium">Password:</span> {password}</p>
+                        <p className="font-light text-base">
+                            <span className="font-medium">Password:</span> {decodePassword(password)}
+                        </p>
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-y-[10px] mt-0">
                             <label htmlFor="is_active" className="text-base font-medium top-0">Account Status:</label>
@@ -102,7 +134,7 @@ const ShowAccount = ({ account, onClose }) => {
                                 id="is_active"
                                 value={String(isActive)}
                                 onChange={handleChange}
-                                disabled={!!projectname}    
+                                disabled={!!projectname}
                                 className="px-2 py-2 border border-gray-300 rounded text-sm"
                             >
                                 <option disabled value="">Select Project Manager</option>

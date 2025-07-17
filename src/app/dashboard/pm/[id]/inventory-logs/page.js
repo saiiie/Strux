@@ -3,11 +3,16 @@
 import { Sidebar, Card, CreateButton } from '@/app/components/components';
 import { pmTabs, pmLogsColumns, creatLogHeaders } from '@/app/data/data';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { CirclePlus } from 'lucide-react';
 import addLog from '@/lib/inventory/addLog';
 
 export default function ProjectManagerPage() {
+
+  const router = useRouter();
+  const params = useParams();
+  const pmid = params.id;
+
   const columns = pmLogsColumns();
   const [projects, setProjects] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -16,8 +21,21 @@ export default function ProjectManagerPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [createLog, setCreateLog] = useState(false);
-  const params = useParams();
-  const pmid = parseInt(params.id);
+
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    setCurrentUser(storedUser);
+  }, []);
+
+  useEffect(() => {
+    if (!currentUser || !pmid) return;
+
+    if (currentUser === 'admin' || pmid !== currentUser) {
+      router.push('/');
+    }
+  }, [currentUser, pmid]);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -53,7 +71,7 @@ export default function ProjectManagerPage() {
 
   return (
     <div className="flex h-screen w-screen m-0 p-0">
-      <Sidebar tabs={pmTabs( pmid )} />
+      <Sidebar tabs={pmTabs(pmid)} />
       <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
         <h2 className="text-2xl font-semibold mb-1 flex items-center gap-x-[10px] self-start">
           {project
@@ -142,7 +160,7 @@ function CreateLogModal({ onClose, projectId }) {
 
         <div className="overflow-y-auto min-h-[70%] border border-[#0C2D49] rounded-sm">
           <table className="w-full border-collapse">
-            
+
             <thead>
               <tr className="text-center text-[#F9F9F9] bg-[#0C2D49] text-sm">
                 {headers.map((title, index) => (

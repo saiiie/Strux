@@ -3,11 +3,15 @@
 import { Sidebar, Card, CreateButton } from '@/app/components/components';
 import { pmTabs, requestsPMColumns } from '@/app/data/data';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { CirclePlus } from 'lucide-react';
 import addRequest from '@/lib/requests/addRequest'
 
 export default function MaterialRequestsPage() {
+    const router = useRouter();
+    const params = useParams();
+    const pmid = params.id;
+    
     const columns = requestsPMColumns();
     const [requests, setRequests] = useState([]);
     const [projectName, setProjectName] = useState('');
@@ -15,14 +19,25 @@ export default function MaterialRequestsPage() {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [error, setError] = useState('');
     const [formData, setFormData] = useState([{ material: '', requestedQty: 0 }]);
+    const [currentUser, setCurrentUser] = useState(null);
 
-    const params = useParams();
-    const pmid = params.id;
+    useEffect(() => {
+        const storedUser = localStorage.getItem('currentUser');
+        setCurrentUser(storedUser);
+    }, []);
+
+    useEffect(() => {
+        if (!currentUser || !pmid) return;
+
+        if (currentUser === 'admin' || pmid !== currentUser) {
+            router.push('/');
+        }
+    }, [currentUser, pmid]);
 
     useEffect(() => {
         const fetchMaterialRequests = async () => {
             try {
-                const res = await fetch(`/api/material-requests/${pmid}`);
+                const res = await fetch(`/api/material-requests/${currentUser}`);
                 const data = await res.json();
                 setRequests(data);
                 if (Array.isArray(data) && data.length > 0 && data[0]?.projectname) {
@@ -32,8 +47,8 @@ export default function MaterialRequestsPage() {
                 console.error(error);
             }
         };
-        if (pmid) fetchMaterialRequests();
-    }, [pmid]);
+        if (currentUser) fetchMaterialRequests();
+    }, [currentUser]);
 
     return (
         <div className='flex h-screen w-screen m-0 p-0'>
