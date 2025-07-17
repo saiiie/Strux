@@ -112,8 +112,11 @@ export default function SettingsPage() {
                             </div>
                             <div className="mt-8">
                                 <button
-                                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
-                                    onClick={() => alert("Edit functionality coming soon!")}
+                                    className="py-2 px-5 bg-[#0C2D49] text-[#FBFBFB] font-medium rounded-md w-fit
+                                                hover:text-[#0C2D49] hover:bg-[#FBFBFB]
+                                                hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)]
+                                                transition-all mt-0"
+                                                onClick={() => alert("Edit functionality coming soon!")}
                                 >
                                     Edit Profile
                                 </button>
