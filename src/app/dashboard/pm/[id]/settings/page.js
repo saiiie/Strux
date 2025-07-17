@@ -7,15 +7,13 @@ import { useRouter, useParams } from 'next/navigation';
 
 export default function SettingsPage() {
 
-    const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [currentUser, setCurrentUser] = useState('');
     const [accountInfo, setAccountInfo] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    
+
     const router = useRouter();
     const params = useParams();
-    const pmid = params.id;
 
     useEffect(() => {
         const storedUser = localStorage.getItem('currentUser');
@@ -23,46 +21,37 @@ export default function SettingsPage() {
     }, []);
 
     useEffect(() => {
+        const pmid = params?.id;
+
         if (!currentUser || !pmid) return;
 
-        if (currentUser === 'admin' || pmid !== currentUser) {
+        if (currentUser !== 'admin' && pmid !== currentUser) {
             router.push('/');
         }
-    }, [currentUser, pmid]);
-
+    }, [currentUser, params]);
+    
+            console.log(currentUser);
 
     useEffect(() => {
-        if (!currentUser) return;
+        const fetchAccount = async () => {
+            const pmid = params?.id;
+            if (!currentUser || !pmid) return;
 
-        const fetchAccounts = async () => {
-            setIsLoading(true);
             try {
-                const response = await fetch('/api/accounts/accounts');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                const accountFound = data.find(account => account.pmid.toString() === currentUser);
-
-                if (accountFound) {
-                    setAccountInfo(accountFound);
-                    console.log("Found Account Info:", accountFound);
-                } else {
-                    console.error(`Account with pmid ${currentUser} not found.`);
-                    setAccountInfo({});
-                    setErrorMessage(`Account with ID ${currentUser} not found. Please check the URL.`);
-                }
-
+                const res = await fetch(`/api/accounts/settings?currentUser=${pmid}`);
+                const data = await res.json();
+                console.log(data);
+                setAccountInfo(data);
+                setIsLoading(false);
             } catch (error) {
-                console.error("Error fetching accounts:", error);
-                setErrorMessage('Failed to load account data. Please try again.');
-            } finally {
+                console.error(error);
+                setErrorMessage('Failed to fetch account info.');
                 setIsLoading(false);
             }
         };
 
-        fetchAccounts();
-    }, [currentUser]);
+        fetchAccount();
+    }, [currentUser, params]);
 
 
 
@@ -116,7 +105,7 @@ export default function SettingsPage() {
                                                 hover:text-[#0C2D49] hover:bg-[#FBFBFB]
                                                 hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)]
                                                 transition-all mt-0"
-                                                onClick={() => alert("Edit functionality coming soon!")}
+                                    onClick={() => alert("Edit functionality coming soon!")}
                                 >
                                     Edit Profile
                                 </button>

@@ -30,11 +30,12 @@ export default function ProjectManagerPage() {
   }, []);
 
   useEffect(() => {
-    if (!currentUser || !pmid) return;
+
+    if(!currentUser || !pmid ) return;
 
     if (currentUser === 'admin' || pmid !== currentUser) {
-      router.push('/');
-    }
+            router.push('/');
+        }
   }, [currentUser, pmid]);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ export default function ProjectManagerPage() {
 
   return (
     <div className="flex h-screen w-screen m-0 p-0">
-      <Sidebar tabs={pmTabs(pmid)} />
+      <Sidebar tabs={pmTabs(currentUser)} />
       <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
         <h2 className="text-2xl font-semibold mb-1 flex items-center gap-x-[10px] self-start">
           {project

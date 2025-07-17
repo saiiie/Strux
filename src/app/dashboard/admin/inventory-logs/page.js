@@ -12,13 +12,13 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('currentUser');
+        const storedUser = sessionStorage.getItem('currentUser');
         setCurrentUser(storedUser);
         setLoading(false); 
     }, []);
 
     useEffect(() => {
-        if (!loading && currentUser !== 'admin') {
+        if (!currentUser && !loading && currentUser !== 'admin') {
             router.push('/');
         }
     }, [currentUser, loading]);

@@ -5,6 +5,7 @@ import { adminTabs, projectsColumns } from '@/app/data/data';
 import { useState, useEffect } from 'react';
 import { CirclePlus } from 'lucide-react';
 import addProject from "@/lib/projects/add";
+import { useRouter } from 'next/navigation';
 
 export default function Projects() {
     const columns = projectsColumns();
@@ -13,6 +14,30 @@ export default function Projects() {
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [viewProject, setViewProject] = useState(null);
     const [createProj, setCreateProj] = useState(false);
+    const router = useRouter();
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const storedUser = sessionStorage.getItem('currentUser');
+        setCurrentUser(storedUser);
+        setLoading(false);
+    }, []);
+
+    useEffect(() => {
+        if (!currentUser && !loading && currentUser !== 'admin') {
+            router.push('/');
+        }
+    }, [currentUser, loading]);
+
+    if (loading) {
+        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
+    }
+
+    if (currentUser !== 'admin') {
+        return null;
+    }
+
 
     useEffect(() => {
         fetchProjects();
@@ -300,7 +325,7 @@ function CreateProjModal({ onClose, onCreated }) {
                         onChange={handleChange}
                     />
 
-                    
+
                     <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium m-0">
                         Project Manager
                     </label>

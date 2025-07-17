@@ -10,15 +10,20 @@ export default function DashboardPage() {
     const router = useRouter();
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const columns = requestsColumns();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [requests, setRequests] = useState([]);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [viewProject, setViewProject] = useState(null);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('currentUser');
+        const storedUser = sessionStorage.getItem('currentUser');
         setCurrentUser(storedUser);
         setLoading(false); 
     }, []);
 
     useEffect(() => {
-        if (!loading && currentUser !== 'admin') {
+        if (!currentUser && !loading && currentUser !== 'admin') {
             router.push('/');
         }
     }, [currentUser, loading]);
@@ -26,17 +31,6 @@ export default function DashboardPage() {
     if (loading) {
         return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
     }
-
-    if (currentUser !== 'admin') {
-        return null; 
-    }
-
-
-    const columns = requestsColumns();
-    const [errorMessage, setErrorMessage] = useState('');
-    const [requests, setRequests] = useState([]);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [viewProject, setViewProject] = useState(null);
 
     useEffect(() => {
         const fetchRequests = async () => {

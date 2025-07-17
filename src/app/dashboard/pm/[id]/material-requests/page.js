@@ -27,9 +27,9 @@ export default function MaterialRequestsPage() {
     }, []);
 
     useEffect(() => {
-        if (!currentUser || !pmid) return;
-
-        if (currentUser === 'admin' || pmid !== currentUser) {
+        if(!currentUser || !pmid ) return;
+    
+    if (currentUser === 'admin' || pmid !== currentUser) {
             router.push('/');
         }
     }, [currentUser, pmid]);
@@ -52,7 +52,7 @@ export default function MaterialRequestsPage() {
 
     return (
         <div className='flex h-screen w-screen m-0 p-0'>
-            <Sidebar tabs={pmTabs()} />
+            <Sidebar tabs={pmTabs(currentUser)} />
             <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
                 <h2 className="text-2xl font-semibold self-start">{projectName}</h2>
 
