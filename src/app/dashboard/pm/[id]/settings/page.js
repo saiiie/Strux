@@ -3,16 +3,16 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Sidebar } from '@/app/components/components';
-import { pmTabs } from '@/app/data/data'; 
+import { pmTabs } from '@/app/data/data';
 
-export default function SettingsPage() { 
+export default function SettingsPage() {
 
     const params = useParams();
-    const pmid = parseInt(params.id); 
+    const pmid = parseInt(params.id);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [accountInfo, setAccountInfo] = useState({});
-    const [isLoading, setIsLoading] = useState(true); 
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -24,13 +24,13 @@ export default function SettingsPage() {
                 }
                 const data = await response.json();
                 const accountFound = data.find(account => account.pmid === pmid);
-                
+
                 if (accountFound) {
                     setAccountInfo(accountFound);
                     console.log("Found Account Info:", accountFound);
                 } else {
                     console.error(`Account with pmid ${pmid} not found.`);
-                    setAccountInfo({}); 
+                    setAccountInfo({});
                     setErrorMessage(`Account with ID ${pmid} not found. Please check the URL.`);
                 }
 
@@ -41,14 +41,14 @@ export default function SettingsPage() {
                 setIsLoading(false);
             }
         };
-        
+
         if (pmid) {
             fetchAccounts();
         } else {
-            setIsLoading(false); 
+            setIsLoading(false);
         }
 
-    }, [pmid]); 
+    }, [pmid]);
 
 
     return (
@@ -97,8 +97,11 @@ export default function SettingsPage() {
                             </div>
                             <div className="mt-8">
                                 <button
-                                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
-                                    onClick={() => alert("Edit functionality coming soon!")}
+                                    className="py-2 px-5 bg-[#0C2D49] text-[#FBFBFB] font-medium rounded-md w-fit
+                                                hover:text-[#0C2D49] hover:bg-[#FBFBFB]
+                                                hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)]
+                                                transition-all mt-0"
+                                                onClick={() => alert("Edit functionality coming soon!")}
                                 >
                                     Edit Profile
                                 </button>
