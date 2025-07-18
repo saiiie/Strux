@@ -107,7 +107,6 @@ export default function ProjectManagerPage() {
 function CreateLogModal({ onClose, projectId }) {
   const headers = creatLogHeaders();
   const [materials, setMaterials] = useState([]);
-  // const projectid = {projectId};
   const [rows, setRows] = useState([
     {
       materialId: '',

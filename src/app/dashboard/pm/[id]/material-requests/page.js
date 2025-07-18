@@ -11,10 +11,11 @@ export default function MaterialRequestsPage() {
     const router = useRouter();
     const params = useParams();
     const pmid = params.id;
-    
+
     const columns = requestsPMColumns();
     const [requests, setRequests] = useState([]);
     const [projectName, setProjectName] = useState('');
+    const [projectId, setProjectId] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [error, setError] = useState('');
@@ -40,13 +41,20 @@ export default function MaterialRequestsPage() {
                 const res = await fetch(`/api/material-requests/${currentUser}`);
                 const data = await res.json();
                 setRequests(data);
-                if (Array.isArray(data) && data.length > 0 && data[0]?.projectname) {
-                    setProjectName(data[0].projectname);
+
+                if (Array.isArray(data) && data.length > 0) {
+                    if (data[0]?.projectname) {
+                        setProjectName(data[0].projectname);
+                    }
+                    if (data[0]?.projectid) {
+                        setProjectId(data[0].projectid);
+                    }
                 }
             } catch (error) {
                 console.error(error);
             }
         };
+
         if (currentUser) fetchMaterialRequests();
     }, [currentUser]);
 
@@ -66,12 +74,17 @@ export default function MaterialRequestsPage() {
                     onClick={() => setIsCreateModalOpen(true)}
                 />
 
-                
-
                 {selectedRequest && (
                     <ViewRequestModal
                         request={selectedRequest}
                         onClose={() => setSelectedRequest(null)}
+                    />
+                )}
+
+                {isCreateModalOpen && (
+                    <CreateRequestModal
+                        onClose={() => setIsCreateModalOpen(false)}
+                        projectId={projectId}
                     />
                 )}
             </div>
@@ -118,11 +131,11 @@ function CreateRequestModal({ onClose, projectId }) {
 
     return (
         <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-            <div className="z-[101] bg-[#F9F9F9] w-[60%] h-[60%] overflow-auto p-10 pt-8 rounded shadow-lg flex flex-col items-end gap-y-4">
+            <div className="z-[101] bg-[#F9F9F9] w-[60%] h-[65%] overflow-auto p-10 pt-8 rounded shadow-lg flex flex-col items-end gap-y-4">
                 <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer self-end">X</button>
                 <h3 className="text-xl font-semibold mb-2 w-full border-b pb-2">Material Request</h3>
 
-                <div className="overflow-y-auto min-h-[70%] border border-[#0C2D49] rounded-sm">
+                <div className="overflow-y-auto w-full min-h-[70%] border border-[#0C2D49] rounded-sm">
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="text-center text-[#F9F9F9] bg-[#0C2D49] text-sm">
@@ -132,7 +145,7 @@ function CreateRequestModal({ onClose, projectId }) {
                         </thead>
                         <tbody>
                             {rows.map((row, index) => (
-                                <tr key={index} className="hover:bg-[#F5F5F5]">
+                                <tr key={index} className="w-full hover:bg-[#F5F5F5]">
                                     <td>
                                         <select
                                             value={row.materialId}
