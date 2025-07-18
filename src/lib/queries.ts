@@ -198,7 +198,8 @@ export async function getMaterialRequestsByPM(pmid: string) {
       mr.request_id,
       mr.request_date,
       mr.status,
-      p.projectname
+      p.projectname,
+      p.projectid
     FROM material_requests mr
     JOIN projects p ON mr.projectid = p.projectid
     WHERE p.pmid = $1
@@ -278,4 +279,39 @@ export async function getRequestEntriesByRequestId(request_id: number) {
   `;
   const result = await pool.query(query, [request_id]);
   return result.rows;
+}
+
+export async function createMaterialRequest(projectId: string, entries: any[]) {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const requestRes = await client.query(
+      `INSERT INTO material_requests (request_date, status, projectid)
+        VALUES (NOW(), 'Pending', $1)
+        RETURNING request_id`,
+      [projectId]
+    );
+
+    const requestId = requestRes.rows[0].request_id;
+
+    for (const entry of entries) {
+      const { materialId, qtyRequested } = entry;
+
+      await client.query(
+        `INSERT INTO request_entry (request_id, material_id, qty_requested)
+          VALUES ($1, $2, $3)`,
+        [requestId, materialId, qtyRequested]
+      );
+    }
+
+    await client.query('COMMIT');
+    return requestId;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 }
