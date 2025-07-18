@@ -38,6 +38,7 @@ export default function LogInPage() {
         if (data.role === 'Admin') {
           localStorage.setItem('currentUser', 'admin');
           router.push('/dashboard/admin/projects');
+          console.log('Successfully logged to admin side.');
         } else if (data.role === 'Project Manager') {
           localStorage.setItem('currentUser', data.userID); 
           router.push(`/dashboard/pm/${data.userID}/inventory-logs`);

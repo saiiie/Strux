@@ -19,7 +19,7 @@ export default function Projects() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = sessionStorage.getItem('currentUser');
+        const storedUser = localStorage.getItem('currentUser');
         setCurrentUser(storedUser);
         setLoading(false);
     }, []);
@@ -29,15 +29,6 @@ export default function Projects() {
             router.push('/');
         }
     }, [currentUser, loading]);
-
-    if (loading) {
-        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
-    }
-
-    if (currentUser !== 'admin') {
-        return null;
-    }
-
 
     useEffect(() => {
         fetchProjects();
@@ -54,6 +45,13 @@ export default function Projects() {
         }
     };
 
+    if (loading) {
+        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
+    }
+
+    if (!loading && currentUser !== 'admin') {
+        return null;
+    }
 
     return (
         <>

@@ -175,8 +175,8 @@ function CreateRequestModal({ onClose, projectId }) {
                 </div>
 
                 <div className="flex gap-x-3 mt-2 self-end">
-                    <button className="bg-[#0C2D49] text-white text-sm py-2 px-6 rounded" onClick={addRow}>Add Row</button>
-                    <button className="bg-[#0C2D49] text-white text-sm py-2 px-6 rounded" onClick={handleSubmit}>Submit Request</button>
+                    <button className="bg-[#0C2D49] text-white text-sm py-2 px-6 rounded cursor-pointer" onClick={addRow}>Add Row</button>
+                    <button className="bg-[#0C2D49] text-white text-sm py-2 px-6 rounded cursor-pointer" onClick={handleSubmit}>Submit Request</button>
                 </div>
             </div>
         </div>
