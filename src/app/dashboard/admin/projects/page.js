@@ -45,13 +45,7 @@ export default function Projects() {
         }
     };
 
-    if (loading) {
-        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
-    }
-
-    if (!loading && currentUser !== 'admin') {
-        return null;
-    }
+    if (!loading && currentUser !== 'admin') { return null; }
 
     return (
         <>
@@ -146,35 +140,37 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
             <div className="z-[101] bg-white w-[45%] h-[70%] p-10 pt-8 rounded shadow-lg flex flex-col items-end overflow-y-auto">
                 <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
                 <form onSubmit={handleSubmit} className="w-full h-full mt-2 flex flex-col gap-y-[16px]">
-                    <div className="flex justify-between items-center gap-x-[10px] h-fit w-full m-0 mb-5 p-0 border-b border-[rgba(0,0,0,0.6)]">
-                        <h1 className="text-[22px] font-medium p-0 pb-[5px] m-0">
-                            <InputField
-                                name="projectname"
-                                value={editableProject.projectname || ''}
-                                onChange={handleChange}
-                                className="text-[22px] font-medium p-0 m-0 border-none focus:ring-0"
-                            />
-                        </h1>
-                        {/* <Status status={status}/> */}
+                    <div className="flex h-fit w-full m-0 mb-2 py-1 border-b border-[rgba(0,0,0,0.6)]">
+                        <input
+                            type="text"
+                            name="projectname"
+                            value={editableProject.projectname || ''}
+                            onChange={handleChange}
+                            className="text-3xl font-semibold p-0 m-0 border-none bg-transparent focus:outline-none focus:ring-0"
+                        />
                     </div>
-                    <label htmlFor="pmid" className="text-sm font-medium text-[#0C2D49]">
-                        Project Manager
-                    </label>
-                    <select
-                        id="pmid"
-                        name="pmid"
-                        value={editableProject.pmid || ''}
-                        onChange={handleChange}
-                        className={`px-2 py-2 border border-gray-300 rounded text-sm focus:outline-none ${editableProject.pmid === '' ? 'text-gray-400' : 'text-black'
-                            }`}
-                    >
-                        {managers.map((pm) => (
-                            <option key={pm.pmid} value={pm.pmid}>
-                                {pm.fname} {pm.lname}
-                            </option>
-                        ))}
-                    </select>
 
+                    <div className="flex flex-col gap-y-[5px] h-fit w-full m-0 p-0">
+                        <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium m-0">
+                            Project Manager
+                        </label>
+                        <select
+                            id="pmid"
+                            name="pmid"
+                            value={editableProject.pmid || ''}
+                            onChange={handleChange}
+                            className={`px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
+                                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all 
+                                        ${editableProject.pmid === '' ? 'text-gray-400' : 'text-black'
+                                }`}
+                        >
+                            {managers.map((pm) => (
+                                <option key={pm.pmid} value={pm.pmid}>
+                                    {pm.fname} {pm.lname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
                     <InputField
                         label="Project Location"
@@ -197,19 +193,22 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
                         onChange={handleChange}
                     />
 
-                    <label htmlFor="status" className="text-base font-medium top-0">Project Status:</label>
-                    <select
-                        id="status"
-                        value={editableProject.status || ''}
-                        onChange={handleChange}
-                        name='status'
-                        className="px-2 py-2 border border-gray-300 rounded text-sm"
-                    >
-                        <option disabled value="">Select Project Status</option>
-                        <option value="Ongoing">Ongoing</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
+                    <div className="flex flex-col gap-y-[5px] w-full m-0 p-0 mb-4">
+                        <label htmlFor="status" className="text-sm text-[#0C2D49] font-medium m-0">Project Status:</label>
+                        <select
+                            id="status"
+                            value={editableProject.status || ''}
+                            onChange={handleChange}
+                            name='status'
+                            className="px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
+                                    hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
+                        >
+                            <option disabled value="">Select Project Status</option>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
 
                     <SubmitButton text="Update Project" />
                 </form>
@@ -270,7 +269,7 @@ function CreateProjModal({ onClose, onCreated }) {
 
     return (
         <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-            <div className="z-[101] bg-white w-[40%] h-[70%] p-6 rounded shadow-lg flex flex-col overflow-y-auto">
+            <div className="z-[101] bg-white w-[45%] h-[76%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="text-sm text-gray-700 hover:text-black cursor-pointer self-end"
@@ -281,6 +280,9 @@ function CreateProjModal({ onClose, onCreated }) {
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-y-[15px] mt-4 m-0"
                 >
+                    <div className="flex h-fit w-full m-0 py-1 border-b border-[rgba(0,0,0,0.6)]">
+                        <h3 className="text-2xl font-semibold p-0 m-0">Enter Details</h3>
+                    </div>
 
                     <InputField
                         label="Client"
@@ -323,25 +325,27 @@ function CreateProjModal({ onClose, onCreated }) {
                         onChange={handleChange}
                     />
 
-
-                    <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium m-0">
-                        Project Manager
-                    </label>
-                    <select
-                        id="pmid"
-                        name="pmid"
-                        value={formData.pmid}
-                        onChange={handleChange}
-                        className={`px-2 py-2 border border-[#CCCCCC] text-sm focus:outline-none mb-6
+                    <div className="flex flex-col gap-y-[5px] w-full m-0 p-0 mb-2">
+                        <label htmlFor="pmid" className="text-sm text-[#0C2D49] font-medium m-0">
+                            Project Manager
+                        </label>
+                        <select
+                            id="pmid"
+                            name="pmid"
+                            value={formData.pmid}
+                            onChange={handleChange}
+                            className={`px-2 py-2 border border-[#CCCCCC] text-sm focus:outline-none
                         hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all ${formData.pmid === '' ? 'text-gray-400' : 'text-black'
-                            }`}>
-                        <option disabled value="">Select Project Manager</option>
-                        {managers.map((pm) => (
-                            <option key={pm.pmid} value={pm.pmid}>
-                                {pm.fname} {pm.lname}
-                            </option>
-                        ))}
-                    </select>
+                                }`}>
+                            <option disabled value="">Select Project Manager</option>
+                            {managers.map((pm) => (
+                                <option key={pm.pmid} value={pm.pmid}>
+                                    {pm.fname} {pm.lname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <SubmitButton text="Create Project" />
                 </form>
             </div>

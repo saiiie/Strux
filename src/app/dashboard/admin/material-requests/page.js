@@ -6,10 +6,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
-
     const router = useRouter();
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
+
     const columns = requestsColumns();
     const [errorMessage, setErrorMessage] = useState('');
     const [requests, setRequests] = useState([]);
@@ -17,9 +17,9 @@ export default function DashboardPage() {
     const [viewProject, setViewProject] = useState(null);
 
     useEffect(() => {
-        const storedUser = sessionStorage.getItem('currentUser');
+        const storedUser = localStorage.getItem('currentUser');
         setCurrentUser(storedUser);
-        setLoading(false); 
+        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -27,10 +27,6 @@ export default function DashboardPage() {
             router.push('/');
         }
     }, [currentUser, loading]);
-
-    if (loading) {
-        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
-    }
 
     useEffect(() => {
         const fetchRequests = async () => {
@@ -45,6 +41,8 @@ export default function DashboardPage() {
         }
         fetchRequests();
     }, []);
+
+    if (!loading && currentUser !== 'admin') { return null; }
 
     return (
         <>
@@ -100,56 +98,53 @@ function ViewRequestModal({ request, onClose }) {
     }, [requestId]);
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(0,0,0,0.3)]">
-            <div className="bg-white w-[700px] rounded-lg shadow-lg relative p-6 text-black">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-semibold">Request Details</h3>
-                    <button
-                        onClick={onClose}
-                        className="text-[#0C2D49] text-lg font-bold cursor-pointer"
-                    >
-                        ✕
-                    </button>
-                </div>
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="bg-[#F9F9F9] w-[45%] h-[55%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
+                <button
+                    onClick={onClose}
+                    className="text-sm text-gray-700 hover:text-black cursor-pointer self-end"
+                >
+                    X
+                </button>
 
-                <div className="mb-4">
-                    <p className="text-sm text-gray-500">DATE</p>
-                    <p className="font-medium">{requestDate}</p>
-                    <div className="w-full h-[1px] bg-black mt-2"></div>
-                </div>
+                <h3 className="text-2xl font-semibold mb-4 border-b border-b-[#0C2D49] pb-[5px]">
+                    Request Date: {requestDate}
+                </h3>
 
-                <div className="grid grid-cols-4 gap-4 text-sm font-semibold text-gray-700 border-b pb-2 mb-2">
-                    <div>Material Name</div>
-                    <div>Qty Requested</div>
-                    <div>Qty Received</div>
-                    <div>Status</div>
-                </div>
-
-                {loading ? (
-                    <p className="text-sm text-gray-500 py-4">Loading entries...</p>
-                ) : entries.length > 0 ? (
-                    entries.map((entry, index) => (
-                        <div
-                            key={index}
-                            className="grid grid-cols-4 gap-4 text-sm text-gray-800 py-2 border-b"
-                        >
-                            <div>{entry.material_name}</div>
-                            <div>{entry.qty_requested ?? 0}</div>
-                            <div>{entry.qty_received ?? 0}</div>
-                            <div>{entry.status}</div>
+                <div className="overflow-y-auto min-h-[70%] border border-[#0C2D49] rounded-sm">
+                    {loading ? (
+                        <div className="text-center py-4 text-gray-500">Loading entries...</div>
+                    ) : entries.length > 0 ? (
+                        <table className="min-w-full border-separate border-spacing-0 border-none text-sm">
+                            <thead>
+                                <tr className="bg-[#0C2D49] text-[#F9F9F9]">
+                                    <th className="border-none px-4 py-4 text-center font-normal">Material Name</th>
+                                    <th className="border-none px-4 py-4 text-center font-normal">Qty Requested</th>
+                                    <th className="border-none px-4 py-4 text-center font-normal">Qty Received</th>
+                                    <th className="border-none px-4 py-4 text-center font-normal">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {entries.map((entry, index) => (
+                                    <tr key={index}>
+                                        <td className="px-4 py-3 text-center">{entry.material_name}</td>
+                                        <td className="px-4 py-3 text-center">{entry.qty_requested ?? 0}</td>
+                                        <td className="px-4 py-3 text-center">{entry.qty_received ?? 0}</td>
+                                        <td className="px-4 py-3 text-center">{entry.status}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div className="text-center py-4 text-gray-500">
+                            No entries found for this request.
                         </div>
-                    ))
-                ) : (
-                    <p className="text-sm text-gray-500 py-4">No entries found for this request.</p>
-                )}
+                    )}
+                </div>
 
-                <div className="mt-6 flex justify-end">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-[#0A2C46] text-white rounded-md hover:bg-[#083047]"
-                    >
-                        Close
-                    </button>
+                <div className="flex gap-x-3 m-0 p-0 mt-4 self-end">
+                    <button className="bg-[#0C2D49] text-[#F9F9F9] text-sm py-2 px-6 rounded cursor-pointer">Reject Request</button>
+                    <button className="bg-[#0C2D49] text-[#F9F9F9] text-sm py-2 px-6 rounded cursor-pointer">Accept Request</button>
                 </div>
             </div>
         </div>

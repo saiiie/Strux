@@ -12,6 +12,13 @@ export default function DashboardPage() {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const columns = accountsColumns();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [accounts, setAccounts] = useState([]);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [viewAccount, setViewAccount] = useState({});
+    const [createAcc, setCreateAcc] = useState(false);
+
     useEffect(() => {
         const storedUser = localStorage.getItem('currentUser');
         setCurrentUser(storedUser);
@@ -23,21 +30,6 @@ export default function DashboardPage() {
             router.push('/');
         }
     }, [currentUser, loading]);
-
-    if (loading) {
-        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
-    }
-
-    if (currentUser !== 'admin') {
-        return null; 
-    }
-
-    const columns = accountsColumns();
-    const [errorMessage, setErrorMessage] = useState('');
-    const [accounts, setAccounts] = useState([]);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [viewAccount, setViewAccount] = useState({});
-    const [createAcc, setCreateAcc] = useState(false);
 
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -53,6 +45,9 @@ export default function DashboardPage() {
         }
         fetchAccounts();
     }, []);
+
+    if (!loading && currentUser !== 'admin') { return null; }
+
 
     return (
         <>
@@ -115,7 +110,7 @@ const ShowAccount = ({ account, onClose }) => {
 
     return (
         <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-            <div className="z-[101] bg-white w-[45%] h-[50%] p-10 pt-8 rounded shadow-lg flex flex-col items-end">
+            <div className="z-[101] bg-[#F9F9F9] w-[45%] h-[50%] p-10 pt-8 rounded shadow-lg flex flex-col items-end">
                 <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer">X</button>
                 <div className="w-full h-full mt-2">
                     <div className="flex justify-between items-center gap-x-[10px] h-fit w-full m-0 mb-5 p-0 border-b border-[rgba(0,0,0,0.6)]">
@@ -147,6 +142,8 @@ const ShowAccount = ({ account, onClose }) => {
                                     You can't deactivate this account because they are assigned to a project.
                                 </p>
                             )}
+
+                            {!projectname && ( <p className="text-xs text-[#F9F9F9] mb-4 mt-1">Free for assignment.</p> )}
 
                             <SubmitButton text="Submit Changes" disabled={!!projectname} />
                         </form>

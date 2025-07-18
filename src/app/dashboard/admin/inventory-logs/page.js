@@ -11,8 +11,14 @@ export default function DashboardPage() {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const columns = logsColumns();
+    const [logs, setLogs] = useState([]);
+    const [detailsModal, setDetailsModal] = useState(null);
+    const [viewDetails, setViewDetails] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
     useEffect(() => {
-        const storedUser = sessionStorage.getItem('currentUser');
+        const storedUser = localStorage.getItem('currentUser');
         setCurrentUser(storedUser);
         setLoading(false); 
     }, []);
@@ -22,20 +28,6 @@ export default function DashboardPage() {
             router.push('/');
         }
     }, [currentUser, loading]);
-
-    if (loading) {
-        return <div className="p-8 text-gray-500 text-lg">Checking access...</div>;
-    }
-
-    if (currentUser !== 'admin') {
-        return null; 
-    }
-
-    const columns = logsColumns();
-    const [logs, setLogs] = useState([]);
-    const [detailsModal, setDetailsModal] = useState(null);
-    const [viewDetails, setViewDetails] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const fetchLogs = async () => {
@@ -51,6 +43,8 @@ export default function DashboardPage() {
         }
         fetchLogs();
     }, []);
+
+    if (!loading && currentUser !== 'admin') { return null; }
 
     return (
         <>
@@ -120,7 +114,7 @@ function LogDetailsModal({ log, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-[#F9F9F9] w-[40%] h-[60%] p-6 rounded shadow-lg flex flex-col overflow-y-auto">
+            <div className="bg-[#F9F9F9] w-[45%] h-[65%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="text-sm text-gray-700 hover:text-black cursor-pointer self-end"
@@ -128,11 +122,11 @@ function LogDetailsModal({ log, onClose }) {
                     X
                 </button>
 
-                <h3 className="text-xl font-semibold mb-4 border-b border-b-[#0C2D49] pb-[5px]">
+                <h3 className="text-2xl font-semibold mb-4 border-b border-b-[#0C2D49] pb-[5px]">
                     {log.projectname}: {log.location}
                 </h3>
 
-                <div className="flex flex-col mb-4 text-sm">
+                <div className="flex flex-col gap-y-[5px] mb-2 text-sm">
                     <div><strong>Log ID:</strong> {log.log_id}</div>
                     <div><strong>Date:</strong> {formattedDate}</div>
                     <div><strong>Project Manager:</strong> {log.project_manager}</div>
