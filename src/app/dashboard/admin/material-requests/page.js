@@ -78,9 +78,6 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [requestStatus, setRequestStatus] = useState(request.savedStatus || 'Pending');
-    console.log(request);
-    console.log(requestStatus);
-    console.log('HALLO');
 
     const requestId = request?.request_id;
     const requestDate = new Date(request?.request_date).toLocaleDateString();
@@ -129,7 +126,7 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-[#F9F9F9] w-[45%] h-[55%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
+            <div className="bg-[#F9F9F9] w-[45%] h-[60%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="text-sm text-gray-700 hover:text-black cursor-pointer self-end"
@@ -141,7 +138,7 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                     Request Date: {requestDate}
                 </h3>
 
-                <div className="mb-4 self-start">
+                {/* <div className="mb-3 self-start">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Overall Request Status:</label>
                     <select
                         value={requestStatus}
@@ -152,7 +149,7 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                         <option value="Completed" disabled>Completed</option>
                         <option value="Incomplete" disabled>Incomplete</option>
                     </select>
-                </div>
+                </div> */}
 
                 <div className="overflow-y-auto min-h-[70%] border border-[#0C2D49] rounded-sm">
                     {loading ? (

@@ -29,22 +29,23 @@ export default function LogInPage() {
     }
 
     try {
-
       const data = await loginUser(formData);
 
-      console.log(data);
+      if (!data.success) {
+        setErrorMessage('Invalid username or password.');
+        setTimeout(() => setErrorMessage(''), 3000);
+        return;
+      }
 
-      if (data.success) {
-        if (data.role === 'Admin') {
-          localStorage.setItem('currentUser', 'admin');
-          router.push('/dashboard/admin/projects');
-          console.log('Successfully logged to admin side.');
-        } else if (data.role === 'Project Manager') {
-          localStorage.setItem('currentUser', data.userID); 
-          router.push(`/dashboard/pm/${data.userID}/inventory-logs`);
-        }
+      if (data.role === 'Admin') {
+        localStorage.setItem('currentUser', 'admin');
+        router.push('/dashboard/admin/projects');
+      } else if (data.role === 'Project Manager') {
+        localStorage.setItem('currentUser', data.userID);
+        router.push(`/dashboard/pm/${data.userID}/inventory-logs`);
       }
     } catch (error) {
+      console.error(error);
       setErrorMessage('Something went wrong. Please try again.');
       setTimeout(() => setErrorMessage(''), 3000);
     }

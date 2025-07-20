@@ -62,7 +62,7 @@ export default function MaterialRequestsPage() {
         <div className='flex h-screen w-screen m-0 p-0'>
             <Sidebar tabs={pmTabs(currentUser)} />
             <div className="flex flex-col m-0 p-[1.3em] h-[100%] w-[100%] gap-y-[20px] items-center">
-                <h2 className="text-2xl font-semibold self-start">{projectName}</h2>
+                <h2 className="text-3xl font-semibold self-start px-3">{projectName}</h2>
 
                 <Card columns={columns} data={requests}
                     onRowClick={(row) => setSelectedRequest(row)}
@@ -131,7 +131,7 @@ function CreateRequestModal({ onClose, projectId }) {
 
     return (
         <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-            <div className="z-[101] bg-[#F9F9F9] w-[60%] h-[65%] overflow-auto p-10 pt-8 rounded shadow-lg flex flex-col items-end gap-y-4">
+            <div className="z-[101] bg-[#F9F9F9] w-[50%] h-[65%] overflow-auto p-10 pt-8 rounded shadow-lg flex flex-col items-end gap-y-4">
                 <button onClick={onClose} className="text-sm text-gray-700 hover:text-black cursor-pointer self-end">X</button>
                 <h3 className="text-xl font-semibold mb-2 w-full border-b pb-2">Material Request</h3>
 
@@ -139,8 +139,8 @@ function CreateRequestModal({ onClose, projectId }) {
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="text-center text-[#F9F9F9] bg-[#0C2D49] text-sm">
-                                <th className="border-none px-4 py-4 text-center font-normal">Material</th>
-                                <th className="border-none px-4 py-4 text-center font-normal">Qty Requested</th>
+                                <th className="border-none px-4 py-4 text-center font-normal w-1/2">Material</th>
+                                <th className="border-none px-4 py-4 text-center font-normal w-1/2">Qty Requested</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -191,10 +191,8 @@ function ViewRequestModal({ request, onClose }) {
         day: 'numeric',
     });
 
-    console.log(request);
-
     const [editableEntries, setEditableEntries] = useState(request.entries);
-    console.log(editableEntries);
+
     useEffect(() => {
         setEditableEntries(request.entries);
     }, [request]);
@@ -205,11 +203,29 @@ function ViewRequestModal({ request, onClose }) {
         setEditableEntries(updated);
     };
 
+    const handleSaveChanges = async () => {
+        try {
+            const response = await fetch(`/api/material-requests/${request.request_id}/updated-quantity-received`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ entries: editableEntries }),
+            });
 
+            if (!response.ok) throw new Error('Failed');
+
+            alert('Saved!');
+            onClose();
+        } catch (err) {
+            console.error(err);
+            alert('Something went wrong');
+        }
+    };
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-[#F9F9F9] w-[40%] h-[50%] p-6 rounded shadow-lg flex flex-col overflow-y-auto">
+            <div className="bg-[#F9F9F9] w-[45%] h-[65%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="text-sm text-gray-700 hover:text-black cursor-pointer self-end">
@@ -219,7 +235,7 @@ function ViewRequestModal({ request, onClose }) {
                 <h3 className="text-xl font-semibold mb-4 border-b border-b-[#0C2D49] pb-[5px]">Request Details</h3>
 
                 <div className="flex justify-between gap-x-[15px] mb-4 text-sm">
-                    <div><strong>Request ID:</strong> {request.id}</div>
+                    <div><strong>Request ID:</strong> {request.request_id}</div>
                     <div><strong>Date:</strong> {date}</div>
                 </div>
 
@@ -236,56 +252,37 @@ function ViewRequestModal({ request, onClose }) {
                         <tbody>
                             {editableEntries.map((entry, index) => (
                                 <tr key={index}>
-                                    <td className="text-center">{entry.material_name}</td>
-                                    <td className="text-center">{entry.qty_requested}</td>
-                                    <td className="text-center">
+                                    <td className="px-4 py-3 text-center w-1/4">{entry.material_name}</td>
+                                    <td className="px-4 py-3 text-center w-1/4">{entry.qty_requested}</td>
+                                    <td className="px-4 py-3 text-center w-1/4">
                                         {entry.status === 'Accepted' ? (
                                             <input
                                                 type="number"
                                                 min={0}
                                                 value={entry.qty_received ?? 0}
                                                 onChange={e => handleQtyReceivedChange(index, e.target.value)}
-                                                className="w-[60px] px-1 text-center border border-gray-300 rounded"
+                                                className="w-[60px] px-1 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#0C2D49]"
                                             />
                                         ) : (
                                             entry.qty_received ?? 0
                                         )}
                                     </td>
-                                    <td className="text-center">{entry.status}</td>
+                                    <td className="px-4 py-3 text-center w-1/4">{entry.status}</td>
                                 </tr>
                             ))}
                         </tbody>
-
                     </table>
-
-                    <div className="flex justify-end mt-4">
+                </div>
+                <div className="flex justify-end mt-3">
                         <button
                             className="bg-[#0C2D49] text-[#F9F9F9] text-sm py-2 px-6 rounded cursor-pointer"
-                            onClick={async () => {
-                                try {
-                                    const response = await fetch(`/api/material-requests/${request.request_id}/updated-quantity-received`, {
-                                        method: 'PUT',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ entries: editableEntries }), 
-                                    });
-
-                                    if (!response.ok) throw new Error('Failed');
-
-                                    alert('Saved!');
-                                    onClose();
-                                } catch (err) {
-                                    console.error(err);
-                                    alert('Something went wrong');
-                                }
-                            }}
+                            onClick={handleSaveChanges}
                         >
                             Save Changes
                         </button>
                     </div>
-                </div>
             </div>
         </div>
     );
 }
+

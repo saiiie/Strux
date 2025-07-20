@@ -60,6 +60,7 @@ export const getPMAccount = async (currentUser) => {
     SELECT 
       a.username,
       a.password,
+      a.password,
       p.projectname,
       CONCAT(pm.fname, ' ', pm.lname) AS name,
       pm.pmid,

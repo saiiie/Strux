@@ -130,8 +130,6 @@ function SearchBar({ input, setInput }) {
           onChange={(e) => setInput(e.target.value)}
         />
       </div>
-
-      <div className="m-0 w-fit h-[100%] p-[.5em] border text-sm">Dropdown Status Placeholder</div>
     </div>
   )
 }
@@ -218,7 +216,10 @@ function Status({ status }) {
   } else if (status === false || status === 'Deactivated') {
     label = 'Deactivated';
     color = '#fae3e3';
-  } else if (status === 'Ongoing') {
+  } else if (status === 'Rejected') {
+    label = 'Rejected';
+    color = '#fae3e3';
+  }else if (status === 'Ongoing') {
     label = 'Ongoing';
     color = '#e7f3fc';
   } else if (status === 'Completed') {
@@ -232,7 +233,7 @@ function Status({ status }) {
   return (
     <div className="flex justify-center items-center m-0 p-[12px] pt-[16px] pb-[16px] group-hover:bg-[#FAFDFF] transition-colors">
       <div
-        className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm max-w-[150px]"
+        className="h-fit w-[75%] p-[.5em] text-[14px] text-center text-[rgba(0,0,0,0.6)] rounded-sm max-w-[150px] min-w-fit"
         style={{ backgroundColor: color }}
       >
         {label}
