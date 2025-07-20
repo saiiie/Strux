@@ -9,6 +9,9 @@ const outfit = Outfit({
 
 export const metadata = {
   title: 'Log In',
+  icons: {
+    icon: '/strux.png',
+  },
 }
 
 export default function RootLayout({ children }) {

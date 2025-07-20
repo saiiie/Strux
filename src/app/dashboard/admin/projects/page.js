@@ -103,10 +103,11 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
             })
 
             if (!response.ok) {
-                console.error('failed to update');
+                console.error('Failed to update');
             } else {
-                console.log('project details updated');
+                console.log('Project details updated');
                 await onProjectUpdated();
+                onClose();
             }
         } catch (error) {
             console.error('error: ', error);
@@ -116,17 +117,25 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
     };
 
     const [managers, setManagers] = useState([]);
+    const [projects, setProjects] = useState([]);
+
     useEffect(() => {
-        const fetchManagers = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch('/api/projects/projectManagers');
-                const data = await response.json();
-                setManagers(data);
+                const managersRes = await fetch('/api/projects/projectManagers');
+                const managersData = await managersRes.json();
+                setManagers(managersData);
+
+                const projectsRes = await fetch('/api/projects');
+                const projectsData = await projectsRes.json();
+                setProjects(projectsData);
+
             } catch (err) {
-                console.log(err);
+                console.error('Error fetching managers or projects:', err);
             }
         };
-        fetchManagers();
+
+        fetchData();
     }, []);
 
     const formatDateForInput = (dateString) => {
@@ -161,14 +170,20 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
                             onChange={handleChange}
                             className={`px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
                                         hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all 
-                                        ${editableProject.pmid === '' ? 'text-gray-400' : 'text-black'
-                                }`}
+                                        ${editableProject.pmid === '' ? 'text-gray-400' : 'text-black'} cursor-pointer
+                            `}
                         >
-                            {managers.map((pm) => (
-                                <option key={pm.pmid} value={pm.pmid}>
-                                    {pm.fname} {pm.lname}
-                                </option>
-                            ))}
+                            {managers.map(pm => {
+                                const isUnavailable =
+                                    editableProject.pmid !== pm.pmid &&
+                                    projects.some(proj => proj.pmid === pm.pmid && proj.status === 'Ongoing');
+
+                                return (
+                                    <option key={pm.pmid} value={pm.pmid} disabled={isUnavailable}>
+                                        {pm.fname} {pm.lname} {isUnavailable ? '(Unavailable)' : ''}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </div>
 
@@ -228,18 +243,38 @@ function CreateProjModal({ onClose, onCreated }) {
         pmid: '',
     });
 
+    // const [managers, setManagers] = useState([]);
+    // useEffect(() => {
+    //     const fetchManagers = async () => {
+    //         try {
+    //             const response = await fetch('/api/projects/projectManagers');
+    //             const data = await response.json();
+    //             setManagers(data);
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     };
+    //     fetchManagers();
+    // }, []);
+
     const [managers, setManagers] = useState([]);
+    const [projects, setProjects] = useState([]);
+
     useEffect(() => {
-        const fetchManagers = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch('/api/projects/projectManagers');
-                const data = await response.json();
-                setManagers(data);
+                const managersRes = await fetch('/api/projects/projectManagers');
+                const managersData = await managersRes.json();
+                setManagers(managersData);
+
+                const projectsRes = await fetch('/api/projects');
+                const projectsData = await projectsRes.json();
+                setProjects(projectsData);
             } catch (err) {
                 console.log(err);
             }
         };
-        fetchManagers();
+        fetchData();
     }, []);
 
     const handleChange = (e) => {
@@ -335,14 +370,21 @@ function CreateProjModal({ onClose, onCreated }) {
                             value={formData.pmid}
                             onChange={handleChange}
                             className={`px-2 py-2 border border-[#CCCCCC] text-sm focus:outline-none
-                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all ${formData.pmid === '' ? 'text-gray-400' : 'text-black'
-                                }`}>
+                                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all 
+                                        ${formData.pmid === '' ? 'text-black' : 'text-gray-400'}
+                            `}>
                             <option disabled value="">Select Project Manager</option>
-                            {managers.map((pm) => (
-                                <option key={pm.pmid} value={pm.pmid}>
-                                    {pm.fname} {pm.lname}
-                                </option>
-                            ))}
+                            {managers.map((pm) => {
+                                const isUnavailable = projects.some(
+                                    (proj) => proj.pmid === pm.pmid && proj.status === 'Ongoing'
+                                );
+
+                                return (
+                                    <option key={pm.pmid} value={pm.pmid} disabled={isUnavailable}>
+                                        {pm.fname} {pm.lname} {isUnavailable ? '(Unavailable)' : ''}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </div>
 
