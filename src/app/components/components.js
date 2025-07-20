@@ -43,6 +43,11 @@ export function SubmitButton({ text }) {
 }
 
 export function Sidebar({ tabs }) {
+  function handleLogout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = '/';
+  }
+
   return (
     <div className="flex flex-col sticky items-center m-0 p-[1em] h-[100vh] w-[20%] gap-y-[20px] bg-[#0C2D49] min-h-fit min-w-fit">
       <div className="m-0 p-[1em]">
@@ -50,25 +55,44 @@ export function Sidebar({ tabs }) {
       </div>
 
       {tabs.map((tab, i) => (
-        <SidebarTab key={i} label={tab.label} svg={tab.svg} href={tab.href} />
+        <SidebarTab
+          key={i}
+          label={tab.label}
+          svg={tab.svg}
+          href={tab.href}
+          onClick={tab.label === 'Log Out' ? () => handleLogout() : undefined}
+        />
       ))}
     </div>
-  )
+  );
 }
 
-function SidebarTab({ label, svg, href }) {
+function SidebarTab({ label, svg, href, onClick }) {
+  const isClickable = Boolean(onClick);
 
   return (
-    <Link href={href} className="p-0 m-0 h-fit w-[95%]">
-      <div className="
-            flex justify-left items-center m-0 p-[.8em] w-[100%] h-fit cursor-pointer gap-x-[15px]
-            rounded-md hover:bg-[#FBFBFB]/20 transition-all
-            ">
-        {svg}
-        <span className="text-[15px] text-[#FBFBFB] font-medium">{label}</span>
-      </div>
-    </Link>
-  )
+    <div className="p-0 m-0 h-fit w-[95%]">
+      {isClickable ? (
+        <div
+          onClick={onClick}
+          className="flex justify-left items-center m-0 p-[.8em] w-[100%] h-fit cursor-pointer gap-x-[15px]
+                    rounded-md hover:bg-[#FBFBFB]/20 transition-all"
+        >
+          {svg}
+          <span className="text-[15px] text-[#FBFBFB] font-medium">{label}</span>
+        </div>
+      ) : (
+        <Link
+          href={href}
+          className="flex justify-left items-center m-0 p-[.8em] w-[100%] h-fit cursor-pointer gap-x-[15px]
+                    rounded-md hover:bg-[#FBFBFB]/20 transition-all"
+        >
+          {svg}
+          <span className="text-[15px] text-[#FBFBFB] font-medium">{label}</span>
+        </Link>
+      )}
+    </div>
+  );
 }
 
 export function Card({ columns, data, onRowClick }) {
