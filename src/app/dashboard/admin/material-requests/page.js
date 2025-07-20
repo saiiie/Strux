@@ -107,25 +107,26 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
     useEffect(() => {
         if (entries.length === 0) return;
 
-        const isCompleted = entries.every((entry) =>
-            entry.status === 'Rejected' ||
-            ((entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted')
-        );
+        const allRejected = entries.every((entry) => entry.status === 'Rejected');
 
-        const isIncomplete = entries.some((entry) =>
-            !(entry.status === 'Rejected' ||
-                ((entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted'))
-        );
-
-        if (isCompleted && requestStatus !== 'Completed') {
-            setRequestStatus('Completed');
-        } else if (isIncomplete && requestStatus !== 'Incomplete') {
-            setRequestStatus('Incomplete');
+        if (allRejected) {
+            setRequestStatus('Rejected');
+            return;
         }
-    }, [entries, requestStatus]);
 
+        const allCompleted = entries.every(
+            (entry) =>
+                entry.status === 'Accepted' &&
+                (entry.qty_received ?? 0) >= (entry.qty_requested ?? 0)
+        );
 
+        if (allCompleted) {
+            setRequestStatus('Completed');
+            return;
+        }
 
+        setRequestStatus('Incomplete');
+    }, [entries]);
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -151,6 +152,7 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                         <option value="Pending" disabled>Pending</option>
                         <option value="Completed" disabled>Completed</option>
                         <option value="Incomplete" disabled>Incomplete</option>
+                        <option value="Rejected" disabled>Rejected</option>
                     </select>
                 </div>
 
@@ -191,12 +193,10 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                                             </select>
                                         </td>
                                         <td className="px-4 py-3 text-center">
-                                            {(entry.status === 'Rejected') ||
-                                                ((entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted')
+                                            {(entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted'
                                                 ? '✅'
                                                 : '❌'}
                                         </td>
-
                                     </tr>
                                 ))}
                             </tbody>
