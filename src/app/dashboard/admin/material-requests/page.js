@@ -104,6 +104,29 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
         }
     }, [requestId]);
 
+    useEffect(() => {
+        if (entries.length === 0) return;
+
+        const isCompleted = entries.every((entry) =>
+            entry.status === 'Rejected' ||
+            ((entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted')
+        );
+
+        const isIncomplete = entries.some((entry) =>
+            !(entry.status === 'Rejected' ||
+                ((entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted'))
+        );
+
+        if (isCompleted && requestStatus !== 'Completed') {
+            setRequestStatus('Completed');
+        } else if (isIncomplete && requestStatus !== 'Incomplete') {
+            setRequestStatus('Incomplete');
+        }
+    }, [entries, requestStatus]);
+
+
+
+
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
             <div className="bg-[#F9F9F9] w-[45%] h-[55%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
@@ -119,17 +142,16 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                 </h3>
 
                 <div className="mb-4 self-start">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Overall Request Status:</label>
-                <select
-                    value={requestStatus}
-                    onChange={(e) => setRequestStatus(e.target.value)}
-                    className="border border-gray-300 px-3 py-2 rounded text-sm"
-                >
-                    <option value="Pending" disabled>Pending</option>
-                    <option value="Accepted">Accepted</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Partially Accepted">Partially Accepted</option>
-                </select>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Overall Request Status:</label>
+                    <select
+                        value={requestStatus}
+                        onChange={(e) => setRequestStatus(e.target.value)}
+                        className="border border-gray-300 px-3 py-2 rounded text-sm"
+                    >
+                        <option value="Pending" disabled>Pending</option>
+                        <option value="Completed" disabled>Completed</option>
+                        <option value="Incomplete" disabled>Incomplete</option>
+                    </select>
                 </div>
 
                 <div className="overflow-y-auto min-h-[70%] border border-[#0C2D49] rounded-sm">
@@ -143,6 +165,7 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                                     <th className="border-none px-4 py-4 text-center font-normal">Qty Requested</th>
                                     <th className="border-none px-4 py-4 text-center font-normal">Qty Received</th>
                                     <th className="border-none px-4 py-4 text-center font-normal">Status</th>
+                                    <th className="border-none px-4 py-4 text-center font-normal">Completed</th>
                                 </tr>
                             </thead>
 
@@ -166,6 +189,12 @@ function ViewRequestModal({ request, onClose, setSubmittedStatuses, fetchRequest
                                                 <option value="Accepted">Accepted</option>
                                                 <option value="Rejected">Rejected</option>
                                             </select>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            {(entry.status === 'Rejected') ||
+                                                ((entry.qty_received ?? 0) >= (entry.qty_requested ?? 0) && entry.status === 'Accepted')
+                                                ? '✅'
+                                                : '❌'}
                                         </td>
 
                                     </tr>
