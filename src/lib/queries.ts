@@ -315,3 +315,50 @@ export async function createMaterialRequest(projectId: string, entries: any[]) {
     client.release();
   }
 }
+
+export const reviewMaterialRequest = async (requestId: number, entries: any[], requestStatus: string) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    for (const entry of entries) {
+      await client.query(
+        `
+        UPDATE request_entry
+        SET status = $1
+        WHERE request_id = $2 AND entry_id = $3
+        `,
+        [entry.status, requestId, entry.entry_id]
+      )
+    }
+
+    await client.query(
+      `
+        UPDATE material_requests
+        SET status = $1
+        WHERE request_id = $2
+      `, [requestStatus, requestId]
+    )
+
+    await client.query('COMMIT');
+
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+
+export const updateQtyReceived = async (entries: any[]) => {
+  for (const entry of entries) {
+    await pool.query(
+      'UPDATE request_entry SET qty_received = $1 WHERE entry_id = $2',
+      [entry.qty_received, entry.entry_id]
+    );
+
+  }
+};

@@ -28,9 +28,9 @@ export default function MaterialRequestsPage() {
     }, []);
 
     useEffect(() => {
-        if(!currentUser || !pmid ) return;
-    
-    if (currentUser === 'admin' || pmid !== currentUser) {
+        if (!currentUser || !pmid) return;
+
+        if (currentUser === 'admin' || pmid !== currentUser) {
             router.push('/');
         }
     }, [currentUser, pmid]);
@@ -191,6 +191,22 @@ function ViewRequestModal({ request, onClose }) {
         day: 'numeric',
     });
 
+    console.log(request);
+
+    const [editableEntries, setEditableEntries] = useState(request.entries);
+    console.log(editableEntries);
+    useEffect(() => {
+        setEditableEntries(request.entries);
+    }, [request]);
+
+    const handleQtyReceivedChange = (index, value) => {
+        const updated = [...editableEntries];
+        updated[index].qty_received = parseInt(value) || 0;
+        setEditableEntries(updated);
+    };
+
+
+
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
             <div className="bg-[#F9F9F9] w-[40%] h-[50%] p-6 rounded shadow-lg flex flex-col overflow-y-auto">
@@ -218,16 +234,56 @@ function ViewRequestModal({ request, onClose }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {request.entries.map((entry, index) => (
+                            {editableEntries.map((entry, index) => (
                                 <tr key={index}>
-                                    <td className="px-4 py-3 text-center">{entry.material_name || 'N/A'}</td>
-                                    <td className="px-4 py-3 text-center">{entry.qty_requested ?? 0}</td>
-                                    <td className="px-4 py-3 text-center">{entry.qty_received ?? 0}</td>
-                                    <td className="px-4 py-3 text-center">{entry.status}</td>
+                                    <td className="text-center">{entry.material_name}</td>
+                                    <td className="text-center">{entry.qty_requested}</td>
+                                    <td className="text-center">
+                                        {entry.status === 'Accepted' ? (
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                value={entry.qty_received ?? 0}
+                                                onChange={e => handleQtyReceivedChange(index, e.target.value)}
+                                                className="w-[60px] px-1 text-center border border-gray-300 rounded"
+                                            />
+                                        ) : (
+                                            entry.qty_received ?? 0
+                                        )}
+                                    </td>
+                                    <td className="text-center">{entry.status}</td>
                                 </tr>
                             ))}
                         </tbody>
+
                     </table>
+
+                    <div className="flex justify-end mt-4">
+                        <button
+                            className="bg-[#0C2D49] text-[#F9F9F9] text-sm py-2 px-6 rounded cursor-pointer"
+                            onClick={async () => {
+                                try {
+                                    const response = await fetch(`/api/material-requests/${request.request_id}/updated-quantity-received`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ entries: editableEntries }), 
+                                    });
+
+                                    if (!response.ok) throw new Error('Failed');
+
+                                    alert('Saved!');
+                                    onClose();
+                                } catch (err) {
+                                    console.error(err);
+                                    alert('Something went wrong');
+                                }
+                            }}
+                        >
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
