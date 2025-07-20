@@ -22,7 +22,7 @@ export default function DashboardPage() {
     useEffect(() => {
         const storedUser = localStorage.getItem('currentUser');
         setCurrentUser(storedUser);
-        setLoading(false); 
+        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -130,23 +130,23 @@ const ShowAccount = ({ account, onClose }) => {
                                 value={String(isActive)}
                                 onChange={handleChange}
                                 disabled={!!projectname}
-                                className="px-2 py-2 border border-gray-300 rounded text-sm"
+                                className="px-2 py-2 border border-gray-300 rounded text-sm mb-4"
                             >
                                 <option disabled value="">Select Project Manager</option>
                                 <option value="true">Active</option>
                                 <option value="false">Deactivated</option>
                             </select>
 
-                            {projectname && (
-                                <p className="text-xs text-red-500 mb-4 mt-1">
+                            <SubmitButton text="Submit Changes" disabled={!!projectname} />
+                        </form>
+
+                        {projectname && (
+                                <p className="text-sm text-red-500 mb-0 mt-1">
                                     You can't deactivate this account because they are assigned to a project.
                                 </p>
                             )}
 
-                            {!projectname && ( <p className="text-xs text-[#F9F9F9] mb-4 mt-1">Free for assignment.</p> )}
-
-                            <SubmitButton text="Submit Changes" disabled={!!projectname} />
-                        </form>
+                        {!projectname && (<p className="text-sm text-[#7AAF60] mb-0 mt-1">Project Manager available for assignment.</p>)}
                     </div>
                 </div>
             </div>
@@ -155,17 +155,18 @@ const ShowAccount = ({ account, onClose }) => {
 
 }
 
-
 function CreateAccModal({ onClose }) {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        role: '',
+        confirmPassword: '',
+        role: 'Project Manager',
         fname: '',
         lname: '',
-    })
+    });
 
     const [accounts, setAccounts] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -174,10 +175,10 @@ function CreateAccModal({ onClose }) {
                 const data = await response.json();
                 setAccounts(data);
             } catch (error) {
-                setErrorMessage(error);
+                setErrorMessage('Failed to load accounts.');
                 setTimeout(() => setErrorMessage(''), 3000);
             }
-        }
+        };
         fetchAccounts();
     }, []);
 
@@ -188,29 +189,47 @@ function CreateAccModal({ onClose }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const requiredFields = ['username', 'password', 'fname', 'lname'];
+        const requiredFields = ['username', 'password', 'confirmPassword', 'fname', 'lname'];
         for (const field of requiredFields) {
             if (!formData[field]?.trim()) {
+                setErrorMessage('Please fill in all required fields.');
+                setTimeout(() => setErrorMessage(''), 3000);
                 return;
             }
         }
 
+        if (formData.password !== formData.confirmPassword) {
+            setErrorMessage('Passwords do not match.');
+            setTimeout(() => setErrorMessage(''), 3000);
+            return;
+        }
+
+        const isDuplicate = accounts.some(acc => acc.username === formData.username);
+        if (isDuplicate) {
+            setErrorMessage('Username already exists. Please choose another.');
+            setTimeout(() => setErrorMessage(''), 3000);
+            return;
+        }
+
         try {
-            const response = await addAccount(formData);
+            const { confirmPassword, ...accountData } = formData;
+            const response = await addAccount(accountData);
             if (response.success) {
-                console.log(response);
                 onClose();
             } else {
-                console.error('Account creation failed:', response);
+                setErrorMessage('Something went wrong. Please try again.');
+                setTimeout(() => setErrorMessage(''), 3000);
             }
         } catch (err) {
             console.error('Error while creating account:', err);
+            setErrorMessage('Something went wrong. Please try again.');
+            setTimeout(() => setErrorMessage(''), 3000);
         }
     };
 
     return (
         <div className="fixed top-0 left-0 z-[100] flex justify-center items-center h-screen w-screen bg-[rgba(0,0,0,0.3)]">
-            <div className="z-[101] bg-white w-[40%] h-[61%] p-6 rounded shadow-lg flex flex-col overflow-y-auto">
+            <div className="z-[101] bg-white w-[45%] h-[69%] p-10 rounded shadow-lg flex flex-col overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="text-sm text-gray-700 hover:text-black cursor-pointer self-end"
@@ -219,8 +238,11 @@ function CreateAccModal({ onClose }) {
                 </button>
                 <form
                     onSubmit={handleSubmit}
-                    className="flex flex-col gap-y-[15px] mt-4 m-0"
+                    className="flex flex-col gap-y-[15px] mt-2 m-0"
                 >
+                    <div className="h-fit w-full m-0 mb-2 px-1 border-b border-[rgba(0,0,0,0.6)]">
+                        <h3 className="text-3xl font-semibold p-0 m-0">Enter Account Details</h3>
+                    </div>
 
                     <InputField
                         label="Create User ID"
@@ -246,29 +268,35 @@ function CreateAccModal({ onClose }) {
                     <InputField
                         label="Create Password"
                         name="password"
+                        type="password"
                         placeholder="Enter Password"
                         value={formData.password}
                         onChange={handleChange}
                     />
+                    <div className="flex flex-col gap-y-[5px] h-fit w-full m-0 p-0 mb-3">
+                        <label htmlFor="confirmPassword" className="text-sm text-[#0C2D49] font-medium m-0">
+                            Confirm Password
+                        </label>
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            id="confirmPassword"
+                            placeholder="Re-enter Password"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            className="px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
+                        />
+                    </div>
 
-                    <label htmlFor="role" className="text-sm text-[#0C2D49] font-medium m-0">
-                        Select Role
-                    </label>
-                    <select
-                        id="role"
-                        name="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        className={`px-2 py-2 border border-[#CCCCCC] text-sm focus:outline-none mb-6 
-                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all ${formData.role === '' ? 'text-gray-400' : 'text-black'
-                            }`}>
-                        <option disabled value="">Select User Role</option>
-                        <option value="Project Manager">Project Manager</option>
-                        <option value="Admin">Admin</option>
-                    </select>
                     <SubmitButton text="Create Account" />
                 </form>
+                
+                <div className="relative h-fit m-0 mt-4">
+                        <p className={`absolute text-sm text-red-600 transition-all duration-200 ${errorMessage ? 'opacity-100' : 'opacity-0'}`}>
+                            {errorMessage || ' '}
+                        </p>
+                </div>
             </div>
         </div>
-    )
+    );
 }
