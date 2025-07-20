@@ -166,21 +166,27 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
                         <select
                             id="pmid"
                             name="pmid"
-                            value={editableProject.pmid || ''}
+                            value={editableProject.pmid}
                             onChange={handleChange}
-                            className={`px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
-                                        hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all 
-                                        ${editableProject.pmid === '' ? 'text-gray-400' : 'text-black'} cursor-pointer
-                            `}
+                            className="px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
+            hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
                         >
-                            {managers.map(pm => {
-                                const isUnavailable =
-                                    editableProject.pmid !== pm.pmid &&
-                                    projects.some(proj => proj.pmid === pm.pmid && proj.status === 'Ongoing');
+                            <option disabled value="">
+                                Select Project Manager
+                            </option>
+                            {managers.map((pm) => {
+                                const isDisabled =
+                                    editableProject.status === 'Ongoing' &&
+                                    projects.some(
+                                        (proj) =>
+                                            proj.pmid === pm.pmid &&
+                                            proj.status === 'Ongoing' &&
+                                            proj.projectid !== editableProject.projectid
+                                    );
 
                                 return (
-                                    <option key={pm.pmid} value={pm.pmid} disabled={isUnavailable}>
-                                        {pm.fname} {pm.lname} {isUnavailable ? '(Unavailable)' : ''}
+                                    <option key={pm.pmid} value={pm.pmid} disabled={isDisabled}>
+                                        {pm.fname} {pm.lname}
                                     </option>
                                 );
                             })}
@@ -209,17 +215,34 @@ function ProjectDetails({ project, onClose, onProjectUpdated }) {
                     />
 
                     <div className="flex flex-col gap-y-[5px] w-full m-0 p-0 mb-4">
-                        <label htmlFor="status" className="text-sm text-[#0C2D49] font-medium m-0">Project Status:</label>
+                        <label htmlFor="status" className="text-sm text-[#0C2D49] font-medium m-0">
+                            Project Status:
+                        </label>
                         <select
                             id="status"
                             value={editableProject.status || ''}
                             onChange={handleChange}
-                            name='status'
+                            name="status"
                             className="px-3 py-2 border border-[#CCCCCC] text-sm focus:outline-none 
-                                    hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
+                            hover:shadow-[0_2px_4px_rgb(12_45_73_/_0.2)] transition-all"
                         >
-                            <option disabled value="">Select Project Status</option>
-                            <option value="Ongoing">Ongoing</option>
+                            <option disabled value="">
+                                Select Project Status
+                            </option>
+                            <option
+                                value="Ongoing"
+                                disabled={
+                                    editableProject.status !== 'Ongoing' &&
+                                    projects.some(
+                                        (proj) =>
+                                            proj.pmid === editableProject.pmid &&
+                                            proj.status === 'Ongoing' &&
+                                            proj.projectid !== editableProject.projectid // Avoid comparing to itself
+                                    )
+                                }
+                            >
+                                Ongoing
+                            </option>
                             <option value="Completed">Completed</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>
@@ -242,20 +265,6 @@ function CreateProjModal({ onClose, onCreated }) {
         status: 'Ongoing',
         pmid: '',
     });
-
-    // const [managers, setManagers] = useState([]);
-    // useEffect(() => {
-    //     const fetchManagers = async () => {
-    //         try {
-    //             const response = await fetch('/api/projects/projectManagers');
-    //             const data = await response.json();
-    //             setManagers(data);
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     };
-    //     fetchManagers();
-    // }, []);
 
     const [managers, setManagers] = useState([]);
     const [projects, setProjects] = useState([]);
