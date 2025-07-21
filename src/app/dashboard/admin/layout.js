@@ -14,12 +14,11 @@ export const metadata = {
     },
 }
 
-export default function RootLayout({ children }) {
+export default function AdminLayout({ children }) {
     return (
-        <html lang="en">
-            <body className={`${outfit.variable} antialiased`}>
-                {children}
-            </body>
-        </html>
+        <div className={`${outfit.variable} antialiased`}>
+            {children}
+        </div>
     )
 }
+
